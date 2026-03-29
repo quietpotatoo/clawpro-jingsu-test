@@ -827,7 +827,7 @@ export default function MyOpenClaw() {
               <DialogTitle className="text-base font-bold text-gray-900">确认重新安装</DialogTitle>
             </DialogHeader>
             <p className="text-sm text-gray-600 leading-relaxed">
-              重新安装后该 OpenClaw「{reinstallConfirm?.name}」的所有配置和数据将丢失且无法恢复，确认重新安装吗？
+              将使用最新镜像重新安装「{reinstallConfirm?.name}」，清除当前所有配置且无法恢复，安装完成后需重新配置模型和通道。
             </p>
             <div>
               <label className="text-sm font-medium text-gray-700">请输入「重装」以确认</label>
@@ -860,9 +860,9 @@ export default function MyOpenClaw() {
               </DialogTitle>
             </DialogHeader>
             <p className="text-sm text-gray-600 leading-relaxed">
-              {deleteConfirm?.status === "createFail"
-                ? `删除后该 OpenClaw「${deleteConfirm?.name}」的创建失败记录将被清除，确认删除吗？`
-                : `删除后该 OpenClaw「${deleteConfirm?.name}」将无法恢复，确认删除吗？`}
+                {deleteConfirm?.status === "createFail"
+                ? `此操作将移除「${deleteConfirm?.name}」该创建失败的记录，底层资源将由系统自动回收。`
+                : `此操作不可撤销。「${deleteConfirm?.name}」实例及相关数据将被永久删除，已配置的模型、通道和插件将全部清除且无法恢复。`}
             </p>
             {deleteConfirm?.status === "running" && (
               <div>
