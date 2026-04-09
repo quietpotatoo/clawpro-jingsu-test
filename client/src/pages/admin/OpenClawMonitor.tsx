@@ -1002,12 +1002,12 @@ export default function OpenClawMonitor() {
                       <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-500">{claw.createTime}</td>
                       {/* 操作 */}
                       <td className="px-4 py-4">
-                        <div className="flex items-center gap-3 h-5">
+                        <div className="flex items-center gap-3 h-5 whitespace-nowrap">
                           {/* 终端 */}
                           {!isRunning ? (
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <span className="inline-flex items-center gap-1 text-xs text-gray-300 cursor-not-allowed leading-none">
+                                <span className="inline-flex items-center gap-1 text-xs text-gray-300 cursor-not-allowed leading-none whitespace-nowrap">
                                   <Terminal className="w-3.5 h-3.5 flex-shrink-0" />
                                   终端
                                 </span>
@@ -1018,7 +1018,7 @@ export default function OpenClawMonitor() {
                             </Tooltip>
                           ) : (
                             <button
-                              className="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900 leading-none"
+                              className="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900 leading-none whitespace-nowrap"
                               onClick={() => handleOpenTerminal(claw)}
                             >
                               <Terminal className="w-3.5 h-3.5 flex-shrink-0" />
@@ -1029,7 +1029,7 @@ export default function OpenClawMonitor() {
                           {/* 关机/开机 */}
                           {claw.status === "running" ? (
                             <button
-                              className="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900 leading-none"
+                              className="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900 leading-none whitespace-nowrap"
                               onClick={() => setShutdownTarget(claw.id)}
                             >
                               <Power className="w-3.5 h-3.5 flex-shrink-0" />
@@ -1037,14 +1037,14 @@ export default function OpenClawMonitor() {
                             </button>
                           ) : claw.status === "shutdown" ? (
                             <button
-                              className="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900 leading-none"
+                              className="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900 leading-none whitespace-nowrap"
                               onClick={() => setShutdownTarget(claw.id)}
                             >
                               <Power className="w-3.5 h-3.5 flex-shrink-0" />
                               开机
                             </button>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-xs text-gray-300 leading-none">
+                            <span className="inline-flex items-center gap-1 text-xs text-gray-300 leading-none whitespace-nowrap">
                               <Power className="w-3.5 h-3.5 flex-shrink-0" />
                               开机
                             </span>
@@ -1054,7 +1054,7 @@ export default function OpenClawMonitor() {
                           {["creating", "loading", "pending"].includes(claw.status) ? (
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <span className="inline-flex items-center gap-1 text-xs text-gray-300 cursor-not-allowed leading-none">
+                                <span className="inline-flex items-center gap-1 text-xs text-gray-300 cursor-not-allowed leading-none whitespace-nowrap">
                                   <Trash2 className="w-3.5 h-3.5 flex-shrink-0" />
                                   删除
                                 </span>
@@ -1065,7 +1065,7 @@ export default function OpenClawMonitor() {
                             </Tooltip>
                           ) : (
                             <button
-                              className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-700 leading-none"
+                              className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-700 leading-none whitespace-nowrap"
                               onClick={() => handleDeleteClick(claw)}
                             >
                               <Trash2 className="w-3.5 h-3.5 flex-shrink-0" />
