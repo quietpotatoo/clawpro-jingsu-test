@@ -746,7 +746,7 @@ export default function OpenClawMonitor() {
                     <span className="text-xs font-medium text-gray-500 whitespace-nowrap">全选</span>
                   </div>
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '16%' : '22%' }}>名称 / ID</th>
+                <th className="text-left pl-2 pr-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '16%' : '22%' }}>名称 / ID</th>
                 {hasOneid && (
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide w-[18%]">用户归属</th>
                 )}
@@ -846,7 +846,7 @@ export default function OpenClawMonitor() {
                               <span className="inline-flex">
                                 <Checkbox
                                   checked={false}
-                                  className="size-[18px] border-2 border-gray-200 opacity-40 cursor-not-allowed"
+                                  className="size-[18px] border-2 border-gray-200 cursor-not-allowed"
                                 />
                               </span>
                             </TooltipTrigger>
@@ -861,7 +861,7 @@ export default function OpenClawMonitor() {
                         )}
                       </td>
                       {/* 名称/ID */}
-                      <td className="px-4 py-4">
+                      <td className="pl-2 pr-4 py-4">
                         <div className="flex items-center gap-2.5">
                           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0">
                             <Bot className="w-3.5 h-3.5 text-white" />
