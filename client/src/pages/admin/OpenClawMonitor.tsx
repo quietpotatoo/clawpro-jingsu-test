@@ -897,7 +897,7 @@ export default function OpenClawMonitor() {
                           <span className="text-xs font-mono text-gray-500">
                             {claw.version}
                             {claw.version === LATEST_VERSION && (
-                              <span className="ml-1 text-xs text-green-500 font-sans font-normal">最新</span>
+                              <span className="ml-1 text-green-500">最新</span>
                             )}
                           </span>
                         </div>
