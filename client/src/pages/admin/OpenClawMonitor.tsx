@@ -741,7 +741,7 @@ export default function OpenClawMonitor() {
                     <Checkbox
                       checked={isAllSelected ? true : isIndeterminate ? "indeterminate" : false}
                       onCheckedChange={(v) => handleSelectAll(!!v)}
-                      className="size-[18px] border-2 border-gray-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500 data-[state=indeterminate]:bg-blue-500 data-[state=indeterminate]:border-blue-500"
+                      className="size-[18px] border-2 border-gray-200 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500 data-[state=indeterminate]:bg-blue-500 data-[state=indeterminate]:border-blue-500"
                     />
                     <span className="text-xs font-medium text-gray-500 whitespace-nowrap">全选</span>
                   </div>
@@ -846,7 +846,7 @@ export default function OpenClawMonitor() {
                               <span className="inline-flex">
                                 <Checkbox
                                   checked={false}
-                                  className="size-[18px] border-2 border-gray-300 opacity-40 cursor-not-allowed"
+                                  className="size-[18px] border-2 border-gray-200 opacity-40 cursor-not-allowed"
                                 />
                               </span>
                             </TooltipTrigger>
@@ -856,7 +856,7 @@ export default function OpenClawMonitor() {
                           <Checkbox
                             checked={selectedIds.has(claw.id)}
                             onCheckedChange={(v) => handleSelectOne(claw.id, !!v)}
-                            className="size-[18px] border-2 border-gray-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                            className="size-[18px] border-2 border-gray-200 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                           />
                         )}
                       </td>
@@ -1176,8 +1176,7 @@ export default function OpenClawMonitor() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/60">
-                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">实例名称</th>
-                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">ID</th>
+                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">实例</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前版本</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前状态</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">操作</th>
@@ -1188,8 +1187,17 @@ export default function OpenClawMonitor() {
                   const sc = STATUS_CONFIG[c.status];
                   return (
                     <tr key={c.id} className="hover:bg-gray-50/50">
-                      <td className="px-4 py-2.5 text-gray-900 font-medium">{c.name}</td>
-                      <td className="px-4 py-2.5 text-gray-400 font-mono text-xs">{c.instanceId}</td>
+                      <td className="px-4 py-2.5">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0">
+                            <span className="text-white" style={{ fontSize: '10px' }}>C</span>
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium text-gray-900 truncate">{c.name}</div>
+                            <div className="text-xs text-gray-400 font-mono">{c.instanceId}</div>
+                          </div>
+                        </div>
+                      </td>
                       <td className="px-4 py-2.5 text-gray-500 font-mono text-xs">{c.version}</td>
                       <td className="px-4 py-2.5">
                         <span className={`${sc.badgeClass} text-xs inline-flex items-center gap-1`}>
