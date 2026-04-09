@@ -1265,11 +1265,7 @@ export default function OpenClawMonitor() {
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">实例</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前版本</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前状态</th>
-                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">微信</th>
-                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">飞书</th>
-                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">钉钉</th>
-                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">企业微信</th>
-                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">QQ</th>
+                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">插件版本</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">操作</th>
                 </tr>
               </thead>
@@ -1302,19 +1298,20 @@ export default function OpenClawMonitor() {
                         </span>
                       </td>
                       <td className="px-4 py-2.5">
-                        <span className="text-xs font-mono text-gray-700">{c.pluginVersions.wechat || '-'}</span>
-                      </td>
-                      <td className="px-4 py-2.5">
-                        <span className="text-xs font-mono text-gray-700">{c.pluginVersions.feishu || '-'}</span>
-                      </td>
-                      <td className="px-4 py-2.5">
-                        <span className="text-xs font-mono text-gray-700">{c.pluginVersions.dingtalk || '-'}</span>
-                      </td>
-                      <td className="px-4 py-2.5">
-                        <span className="text-xs font-mono text-gray-700">{c.pluginVersions.wecom || '-'}</span>
-                      </td>
-                      <td className="px-4 py-2.5">
-                        <span className="text-xs font-mono text-gray-700">{c.pluginVersions.qq || '-'}</span>
+                        <div className="space-y-0.5">
+                          {[
+                            { label: '微信', val: c.pluginVersions.wechat },
+                            { label: '飞书', val: c.pluginVersions.feishu },
+                            { label: '钉钉', val: c.pluginVersions.dingtalk },
+                            { label: '企业微信', val: c.pluginVersions.wecom },
+                            { label: 'QQ', val: c.pluginVersions.qq },
+                          ].map(({ label, val }) => (
+                            <div key={label} className="flex items-center gap-1.5">
+                              <span className="text-xs text-gray-400 w-12 shrink-0">{label}</span>
+                              <span className="text-xs font-mono text-gray-700">{val || '-'}</span>
+                            </div>
+                          ))}
+                        </div>
                       </td>
                       <td className="px-4 py-2.5">
                         <button
