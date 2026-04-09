@@ -915,7 +915,7 @@ export default function OpenClawMonitor() {
                     )}
                   </div>
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '8%' : '9%' }}>插件版本</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '10%' : '11%' }}>插件版本是否最新</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '12%' : '13%' }}>操作</th>
               </tr>
             </thead>
@@ -1005,14 +1005,23 @@ export default function OpenClawMonitor() {
                           </span>
                         </div>
                       </td>
-                      {/* 插件版本 */}
+                      {/* 插件版本是否最新 */}
                       <td className="px-4 py-4">
-                        <button
-                          className="text-xs text-gray-600 hover:text-gray-900 transition-colors whitespace-nowrap"
-                          onClick={() => setPluginVersionTarget(claw)}
-                        >
-                          查看详情
-                        </button>
+                        {(() => {
+                          const RECOMMENDED: Record<string, string> = { wechat: '3.2.1', dingtalk: '2.1.0', feishu: '1.8.5', wecom: '4.0.2', qq: '1.3.0' };
+                          const isLatest = Object.entries(RECOMMENDED).every(([k, v]) => claw.pluginVersions[k as keyof typeof claw.pluginVersions] === v);
+                          return (
+                            <div className="flex items-center gap-2 whitespace-nowrap">
+                              <span className={`text-xs font-medium ${isLatest ? 'text-green-600' : 'text-red-500'}`}>{isLatest ? '是' : '否'}</span>
+                              <button
+                                className="text-xs text-gray-600 hover:text-gray-900 transition-colors"
+                                onClick={() => setPluginVersionTarget(claw)}
+                              >
+                                查看详情
+                              </button>
+                            </div>
+                          );
+                        })()}
                       </td>
                       {/* 操作 */}
                       <td className="px-4 py-4">
@@ -1363,13 +1372,20 @@ export default function OpenClawMonitor() {
                   { label: '飞书', key: 'feishu', recommended: '1.8.5' },
                   { label: '企业微信', key: 'wecom', recommended: '4.0.2' },
                   { label: 'QQ', key: 'qq', recommended: '1.3.0' },
-                ] as const).map(({ label, key, recommended }, idx, arr) => (
-                  <div key={key} className={`grid grid-cols-3 items-center px-4 py-2.5 ${idx < arr.length - 1 ? 'border-b border-gray-50' : ''} hover:bg-gray-50/50`}>
-                    <span className="text-sm text-gray-600">{label}</span>
-                    <span className="text-sm font-mono text-gray-700">{pluginVersionTarget.pluginVersions[key]}</span>
-                    <span className="text-sm font-mono text-gray-700">{recommended}</span>
-                  </div>
-                ))}
+                ] as const).map(({ label, key, recommended }, idx, arr) => {
+                  const current = pluginVersionTarget.pluginVersions[key];
+                  const isUpToDate = current === recommended;
+                  return (
+                    <div key={key} className={`grid grid-cols-3 items-center px-4 py-2.5 ${idx < arr.length - 1 ? 'border-b border-gray-50' : ''} hover:bg-gray-50/50`}>
+                      <span className="text-sm text-gray-600">{label}</span>
+                      <span className="text-sm font-mono text-gray-700">{current}</span>
+                      {isUpToDate
+                        ? <span className="text-sm text-green-600">已是最新版本</span>
+                        : <span className="text-sm font-mono text-gray-700">{recommended}</span>
+                      }
+                    </div>
+                  );
+                })
               </div>
             </div>
           )}
