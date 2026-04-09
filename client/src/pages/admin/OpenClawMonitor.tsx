@@ -45,7 +45,7 @@ import { MOCK_DEPARTMENTS, MOCK_CLAWS_WITH_DEPT, type DepartmentNode } from "@/l
 import { useAdminMode } from "@/contexts/AdminModeContext";
 
 type ClawStatus = "creating" | "createFail" | "running" | "loading" | "loadFail" | "shutdown" | "maintaining" | "pending" | "upgrading";
-const LATEST_VERSION = "4.2";
+const LATEST_VERSION = "2026.4.2";
 
 interface Claw {
   id: string;
@@ -77,20 +77,20 @@ const STATUS_CONFIG: Record<ClawStatus, {
 };
 
 const MOCK_CLAWS: Claw[] = [
-  { id: "1",  instanceId: "ins-g83c6wvc", name: "Alice的助手",      creator: "alice@acompany.com",  createTime: "2025-12-01 09:12:34", status: "running",     version: "3.28" },
-  { id: "2",  instanceId: "ins-h92d7xwe", name: "Bob工作助手",       creator: "bob@acompany.com",    createTime: "2025-12-15 14:05:22", status: "running",     version: "4.2" },
-  { id: "3",  instanceId: "ins-j14e8yvf", name: "Carol的研究助手",   creator: "carol@acompany.com",  createTime: "2026-01-05 10:33:47", status: "shutdown",    version: "3.28" },
-  { id: "4",  instanceId: "ins-k25f9zwg", name: "Dave的代码助手",    creator: "dave@acompany.com",   createTime: "2026-01-20 16:48:09", status: "running",     version: "3.28" },
-  { id: "5",  instanceId: "ins-l36g0axh", name: "Eve的写作助手",     creator: "eve@acompany.com",    createTime: "2026-02-10 08:21:55", status: "createFail",  version: "3.28" },
-  { id: "6",  instanceId: "ins-m47h1byi", name: "Frank的数据助手",   creator: "frank@acompany.com",  createTime: "2026-02-18 11:07:30", status: "running",     version: "4.2" },
-  { id: "7",  instanceId: "ins-n58i2czj", name: "Grace的翻译助手",   creator: "grace@acompany.com",  createTime: "2026-02-25 15:44:18", status: "creating",    version: "3.28" },
-  { id: "8",  instanceId: "ins-o69j3dak", name: "Henry的销售助手",   creator: "henry@acompany.com",  createTime: "2026-03-01 09:58:03", status: "running",     version: "3.28" },
-  { id: "9",  instanceId: "ins-p70k4ebl", name: "Ivy的客服助手",     creator: "ivy@acompany.com",    createTime: "2026-03-05 13:26:41", status: "maintaining", version: "4.2" },
-  { id: "10", instanceId: "ins-q81l5fcm", name: "Jack的会议助手",    creator: "jack@acompany.com",   createTime: "2026-03-08 17:02:15", status: "running",     version: "3.28" },
-  { id: "11", instanceId: "ins-r92m6gdn", name: "Karen的报告助手",   creator: "karen@acompany.com",  createTime: "2026-03-09 10:15:50", status: "loadFail",    version: "3.28" },
-  { id: "12", instanceId: "ins-s03n7heo", name: "Leo的项目助手",     creator: "leo@acompany.com",    createTime: "2026-03-10 08:39:27", status: "running",     version: "4.2" },
-  { id: "13", instanceId: "ins-t14o8ipf", name: "Mia的新助手",        creator: "mia@acompany.com",    createTime: "2026-03-12 11:00:00", status: "loading",     version: "3.28" },
-  { id: "14", instanceId: "ins-u25p9jqg", name: "Noah的分析助手",    creator: "noah@acompany.com",   createTime: "2026-03-13 14:30:00", status: "pending",     version: "3.28" },
+  { id: "1",  instanceId: "ins-g83c6wvc", name: "Alice的助手",      creator: "alice@acompany.com",  createTime: "2025-12-01 09:12:34", status: "running",     version: "2026.3.28" },
+  { id: "2",  instanceId: "ins-h92d7xwe", name: "Bob工作助手",       creator: "bob@acompany.com",    createTime: "2025-12-15 14:05:22", status: "running",     version: "2026.4.2" },
+  { id: "3",  instanceId: "ins-j14e8yvf", name: "Carol的研究助手",   creator: "carol@acompany.com",  createTime: "2026-01-05 10:33:47", status: "shutdown",    version: "2026.3.28" },
+  { id: "4",  instanceId: "ins-k25f9zwg", name: "Dave的代码助手",    creator: "dave@acompany.com",   createTime: "2026-01-20 16:48:09", status: "running",     version: "2026.3.28" },
+  { id: "5",  instanceId: "ins-l36g0axh", name: "Eve的写作助手",     creator: "eve@acompany.com",    createTime: "2026-02-10 08:21:55", status: "createFail",  version: "2026.3.28" },
+  { id: "6",  instanceId: "ins-m47h1byi", name: "Frank的数据助手",   creator: "frank@acompany.com",  createTime: "2026-02-18 11:07:30", status: "running",     version: "2026.4.2" },
+  { id: "7",  instanceId: "ins-n58i2czj", name: "Grace的翻译助手",   creator: "grace@acompany.com",  createTime: "2026-02-25 15:44:18", status: "creating",    version: "2026.3.28" },
+  { id: "8",  instanceId: "ins-o69j3dak", name: "Henry的销售助手",   creator: "henry@acompany.com",  createTime: "2026-03-01 09:58:03", status: "running",     version: "2026.3.28" },
+  { id: "9",  instanceId: "ins-p70k4ebl", name: "Ivy的客服助手",     creator: "ivy@acompany.com",    createTime: "2026-03-05 13:26:41", status: "maintaining", version: "2026.4.2" },
+  { id: "10", instanceId: "ins-q81l5fcm", name: "Jack的会议助手",    creator: "jack@acompany.com",   createTime: "2026-03-08 17:02:15", status: "running",     version: "2026.3.28" },
+  { id: "11", instanceId: "ins-r92m6gdn", name: "Karen的报告助手",   creator: "karen@acompany.com",  createTime: "2026-03-09 10:15:50", status: "loadFail",    version: "2026.3.28" },
+  { id: "12", instanceId: "ins-s03n7heo", name: "Leo的项目助手",     creator: "leo@acompany.com",    createTime: "2026-03-10 08:39:27", status: "running",     version: "2026.4.2" },
+  { id: "13", instanceId: "ins-t14o8ipf", name: "Mia的新助手",        creator: "mia@acompany.com",    createTime: "2026-03-12 11:00:00", status: "loading",     version: "2026.3.28" },
+  { id: "14", instanceId: "ins-u25p9jqg", name: "Noah的分析助手",    creator: "noah@acompany.com",   createTime: "2026-03-13 14:30:00", status: "pending",     version: "2026.3.28" },
 ];
 
 const PAGE_SIZE = 10;
@@ -800,7 +800,7 @@ export default function OpenClawMonitor() {
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '14%' : '16%' }}>创建人</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '14%' : '16%' }}>创建时间</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '10%' : '12%' }}>OpenClaw 版本</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '10%' : '12%' }}>智能体版本</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '14%' : '16%' }}>操作</th>
               </tr>
             </thead>
@@ -878,16 +878,21 @@ export default function OpenClawMonitor() {
                       <td className="px-4 py-4 text-sm text-gray-500">{claw.creator}</td>
                       {/* 创建时间 */}
                       <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-500">{claw.createTime}</td>
-                      {/* OpenClaw 版本 */}
+                      {/* 智能体版本 */}
                       <td className="px-4 py-4">
-                        <span className={`inline-flex items-center gap-1 text-xs font-mono ${
-                          claw.version === LATEST_VERSION ? "text-green-600" : "text-gray-500"
-                        }`}>
-                          {claw.version}
-                          {claw.version === LATEST_VERSION && (
-                            <span className="text-xs text-green-500 font-sans font-normal">最新</span>
-                          )}
-                        </span>
+                        <div className="flex flex-col">
+                          <span className={`text-xs font-medium ${
+                            claw.version === LATEST_VERSION ? "text-green-600" : "text-gray-700"
+                          }`}>OpenClaw</span>
+                          <span className={`text-xs font-mono ${
+                            claw.version === LATEST_VERSION ? "text-green-500" : "text-gray-400"
+                          }`}>
+                            {claw.version}
+                            {claw.version === LATEST_VERSION && (
+                              <span className="ml-1 text-xs text-green-500 font-sans">最新</span>
+                            )}
+                          </span>
+                        </div>
                       </td>
                       {/* 操作 */}
                       <td className="px-4 py-4">
