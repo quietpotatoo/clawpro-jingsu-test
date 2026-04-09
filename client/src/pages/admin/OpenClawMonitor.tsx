@@ -743,7 +743,7 @@ export default function OpenClawMonitor() {
                       onCheckedChange={(v) => handleSelectAll(!!v)}
                       className="size-[18px] border-2 border-gray-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500 data-[state=indeterminate]:bg-blue-500 data-[state=indeterminate]:border-blue-500"
                     />
-                    <span className="text-xs font-medium text-gray-500">全选</span>
+                    <span className="text-xs font-medium text-gray-500 whitespace-nowrap">全选</span>
                   </div>
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '16%' : '22%' }}>名称 / ID</th>
@@ -1200,7 +1200,7 @@ export default function OpenClawMonitor() {
                       <td className="px-4 py-2.5">
                         <button
                           onClick={() => setSelectedIds(prev => { const n = new Set(prev); n.delete(c.id); return n; })}
-                          className="text-xs text-red-500 hover:text-red-700 transition-colors"
+                          className="text-xs text-red-500 hover:text-red-700 transition-colors whitespace-nowrap"
                         >
                           移除
                         </button>
