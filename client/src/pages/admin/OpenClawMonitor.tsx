@@ -257,6 +257,31 @@ export default function OpenClawMonitor() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showBatchUpgradeDialog, setShowBatchUpgradeDialog] = useState(false);
 
+  // 版本列筛选
+  const VERSION_OPTIONS = ["2026.3.28", "2026.4.2", "unrecognized"] as const;
+  type VersionFilter = typeof VERSION_OPTIONS[number];
+  const [showVersionFilter, setShowVersionFilter] = useState(false);
+  const [selectedVersions, setSelectedVersions] = useState<Set<VersionFilter>>(new Set(VERSION_OPTIONS));
+  const versionFilterButtonRef = useRef<HTMLButtonElement>(null);
+  const [versionFilterPosition, setVersionFilterPosition] = useState<{ top: number; left: number } | null>(null);
+  const [pendingVersions, setPendingVersions] = useState<Set<VersionFilter>>(new Set(VERSION_OPTIONS));
+
+  const handleVersionFilterChange = (v: VersionFilter, checked: boolean) => {
+    setPendingVersions(prev => {
+      const next = new Set(prev);
+      if (checked) next.add(v); else next.delete(v);
+      return next;
+    });
+  };
+
+  const handleVersionFilterReset = () => setPendingVersions(new Set(VERSION_OPTIONS));
+
+  const handleVersionFilterConfirm = () => {
+    setSelectedVersions(new Set(pendingVersions));
+    setShowVersionFilter(false);
+    setPage(1);
+  };
+
   // 判断某实例是否可选（运行中 且 非最新版本）
   const isUpgradable = (claw: Claw) => claw.status === "running" && claw.version !== LATEST_VERSION;
 
@@ -419,14 +444,25 @@ export default function OpenClawMonitor() {
     return selectedStatuses.has(c.status);
   });
 
+  const getVersionKey = (version: string): VersionFilter => {
+    if (version === "2026.3.28") return "2026.3.28";
+    if (version === "2026.4.2") return "2026.4.2";
+    return "unrecognized";
+  };
+
+  const versionFiltered = statusFiltered.filter((c) => {
+    if (selectedVersions.size === VERSION_OPTIONS.length) return true;
+    return selectedVersions.has(getVersionKey(c.version));
+  });
+
   // 当前筛选结果中可选的实例
-  const selectableIds = statusFiltered.filter(isUpgradable).map(c => c.id);
+  const selectableIds = versionFiltered.filter(isUpgradable).map(c => c.id);
   const isAllSelected = selectableIds.length > 0 && selectableIds.every(id => selectedIds.has(id));
   const isIndeterminate = !isAllSelected && selectableIds.some(id => selectedIds.has(id));
 
-  const totalPages = Math.max(1, Math.ceil(statusFiltered.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(versionFiltered.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
-  const paginated = statusFiltered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const paginated = versionFiltered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -811,7 +847,65 @@ export default function OpenClawMonitor() {
                     )}
                   </div>
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '10%' : '12%' }}>智能体版本</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '10%' : '12%' }}>
+                  <div className="flex items-center gap-2 relative z-40">
+                    智能体版本
+                    <button
+                      ref={versionFilterButtonRef}
+                      className="p-1 hover:bg-gray-200 rounded"
+                      onClick={() => {
+                        if (versionFilterButtonRef.current) {
+                          const rect = versionFilterButtonRef.current.getBoundingClientRect();
+                          setVersionFilterPosition({
+                            top: rect.bottom + window.scrollY + 8,
+                            left: rect.left + window.scrollX
+                          });
+                        }
+                        setPendingVersions(new Set(selectedVersions));
+                        setShowVersionFilter(!showVersionFilter);
+                      }}
+                    >
+                      <Filter className="w-3.5 h-3.5 text-gray-400" />
+                    </button>
+                    {showVersionFilter && versionFilterPosition && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-40"
+                          onClick={() => setShowVersionFilter(false)}
+                          style={{ pointerEvents: 'auto' }}
+                        />
+                        <div
+                          className="fixed w-52 bg-white border border-gray-200 rounded-lg shadow-2xl z-50 will-change-transform"
+                          style={{
+                            top: `${versionFilterPosition.top}px`,
+                            left: `${versionFilterPosition.left}px`,
+                            pointerEvents: 'auto'
+                          }}
+                        >
+                          <div className="p-3 space-y-2">
+                            {([
+                              { key: "2026.3.28" as VersionFilter, label: "OpenClaw/2026.3.28" },
+                              { key: "2026.4.2" as VersionFilter, label: "OpenClaw/2026.4.2" },
+                              { key: "unrecognized" as VersionFilter, label: "未识别" },
+                            ]).map(({ key, label }) => (
+                              <label key={key} className="flex items-center gap-2 cursor-pointer">
+                                <Checkbox
+                                  checked={pendingVersions.has(key)}
+                                  onCheckedChange={(checked) => handleVersionFilterChange(key, !!checked)}
+                                />
+                                <span className="text-sm text-gray-700">{label}</span>
+                              </label>
+                            ))}
+                          </div>
+                          <div className="border-t border-gray-100 p-2 flex gap-2">
+                            <Button variant="outline" size="sm" onClick={handleVersionFilterReset} className="flex-1">重置</Button>
+                            <Button size="sm" onClick={handleVersionFilterConfirm} className="flex-1">确认</Button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '14%' : '16%' }}>创建人</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '14%' : '16%' }}>创建时间</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '14%' : '16%' }}>操作</th>
@@ -820,7 +914,7 @@ export default function OpenClawMonitor() {
             <tbody className="divide-y divide-gray-50">
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={hasOneid ? 8 : 7} className="px-6 py-12 text-center text-sm text-gray-400">
+                  <td colSpan={hasOneid ? 9 : 8} className="px-6 py-12 text-center text-sm text-gray-400">
                     暂无符合条件的 OpenClaw
                   </td>
                 </tr>
