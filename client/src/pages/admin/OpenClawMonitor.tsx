@@ -705,7 +705,7 @@ export default function OpenClawMonitor() {
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-colors ${
                 selectedIds.size > 0
                   ? "bg-blue-500 hover:bg-blue-600 text-white border-blue-500"
-                  : "bg-white text-gray-400 border-gray-200 cursor-not-allowed"
+                  : "bg-white text-gray-600 border-gray-200 cursor-not-allowed opacity-60"
               }`}
             >
               <CircleArrowUp className="w-3.5 h-3.5" />
@@ -1154,10 +1154,12 @@ export default function OpenClawMonitor() {
         <DialogContent className="sm:max-w-[480px]">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-gray-900">确认批量更新</DialogTitle>
-            <DialogDescription className="text-sm text-gray-500">
-              以下 {selectedIds.size} 个实例将被升级至最新版本（{LATEST_VERSION}），确认后实例状态将变为「升级中」。
-            </DialogDescription>
           </DialogHeader>
+          <div className="space-y-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+            <p>1. 更新版本预计需要 5～10 分钟不等，期间 OpenClaw 实例不可使用。</p>
+            <p>2. OpenClaw 版本将会升级至当前生效镜像对应的版本（{LATEST_VERSION}），如果这不是您的目标版本，请先将目标镜像指定为生效状态再执行升级操作。</p>
+            <p>3. 更新后模型（Models）、通道（Channels）、技能（Skills）和记忆均不会丢失。</p>
+          </div>
           <div className="max-h-64 overflow-y-auto border border-gray-100 rounded-xl">
             <table className="w-full text-sm">
               <thead>
@@ -1177,11 +1179,6 @@ export default function OpenClawMonitor() {
                 ))}
               </tbody>
             </table>
-          </div>
-          <div className="space-y-2 text-xs text-gray-500 bg-gray-50 rounded-xl px-4 py-3">
-            <p>1. 更新版本预计需要 5～10 分钟不等，期间 OpenClaw 实例不可使用。</p>
-            <p>2. OpenClaw 版本将会升级至当前生效镜像对应的版本（{LATEST_VERSION}），如果这不是您的目标版本，请先将目标镜像指定为生效状态再执行升级操作。</p>
-            <p>3. 更新后模型（Models）、通道（Channels）、技能（Skills）和记忆均不会丢失。</p>
           </div>
           <DialogFooter className="gap-2 pt-2">
             <Button variant="outline" onClick={() => setShowBatchUpgradeDialog(false)}>取消</Button>
