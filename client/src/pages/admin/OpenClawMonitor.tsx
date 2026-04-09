@@ -736,7 +736,7 @@ export default function OpenClawMonitor() {
             <thead>
               <tr className="border-b border-gray-50 bg-gray-50/50 relative">
                 {/* 复选框列 */}
-                <th className="px-4 py-3" style={{ width: '80px' }}>
+                <th className="pl-4 pr-2 py-3" style={{ width: '56px' }}>
                   <div className="flex items-center gap-1.5">
                     <Checkbox
                       checked={isAllSelected ? true : isIndeterminate ? "indeterminate" : false}
@@ -811,9 +811,9 @@ export default function OpenClawMonitor() {
                     )}
                   </div>
                 </th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '10%' : '12%' }}>智能体版本</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '14%' : '16%' }}>创建人</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '14%' : '16%' }}>创建时间</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '10%' : '12%' }}>智能体版本</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '14%' : '16%' }}>操作</th>
               </tr>
             </thead>
@@ -890,10 +890,6 @@ export default function OpenClawMonitor() {
                           {statusConfig.label}
                         </span>
                       </td>
-                      {/* 创建人 */}
-                      <td className="px-4 py-4 text-sm text-gray-500">{claw.creator}</td>
-                      {/* 创建时间 */}
-                      <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-500">{claw.createTime}</td>
                       {/* 智能体版本 */}
                       <td className="px-4 py-4">
                         <div className="flex flex-col">
@@ -906,6 +902,10 @@ export default function OpenClawMonitor() {
                           </span>
                         </div>
                       </td>
+                      {/* 创建人 */}
+                      <td className="px-4 py-4 text-sm text-gray-500">{claw.creator}</td>
+                      {/* 创建时间 */}
+                      <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-500">{claw.createTime}</td>
                       {/* 操作 */}
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3 h-5">
