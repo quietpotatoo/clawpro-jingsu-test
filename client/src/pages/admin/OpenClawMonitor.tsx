@@ -994,7 +994,7 @@ export default function OpenClawMonitor() {
                       {/* 创建时间 */}
                       <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-500">{claw.createTime}</td>
                       {/* 智能体版本 */}
-                      <td className="pl-2 pr-4 py-4">
+                      <td className="px-4 py-4">
                         <div className="flex flex-col">
                           <span className="text-xs font-medium text-gray-500">OpenClaw</span>
                           <span className="text-xs font-mono text-gray-500">
