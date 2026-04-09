@@ -893,7 +893,7 @@ export default function OpenClawMonitor() {
                                   checked={pendingVersions.has(key)}
                                   onCheckedChange={(checked) => handleVersionFilterChange(key, !!checked)}
                                 />
-                                <span className="text-sm text-gray-700">{label}</span>
+                                <span className="text-sm text-gray-700 normal-case">{label}</span>
                               </label>
                             ))}
                           </div>
@@ -940,7 +940,7 @@ export default function OpenClawMonitor() {
                               <span className="inline-flex">
                                 <Checkbox
                                   checked={false}
-                                  className={`size-[18px] border-2 border-gray-200 cursor-not-allowed${isAllSelected || isIndeterminate ? ' opacity-40' : ''}`}
+                                  className="size-[18px] border-2 border-gray-200 cursor-not-allowed opacity-40"
                                 />
                               </span>
                             </TooltipTrigger>
