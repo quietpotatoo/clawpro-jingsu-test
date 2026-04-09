@@ -915,7 +915,7 @@ export default function OpenClawMonitor() {
                     )}
                   </div>
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '10%' : '11%' }}>插件版本是否最新</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '8%' : '9%' }}>插件版本</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '12%' : '13%' }}>操作</th>
               </tr>
             </thead>
@@ -1005,23 +1005,14 @@ export default function OpenClawMonitor() {
                           </span>
                         </div>
                       </td>
-                      {/* 插件版本是否最新 */}
+                      {/* 插件版本 */}
                       <td className="px-4 py-4">
-                        {(() => {
-                          const RECOMMENDED: Record<string, string> = { wechat: '3.2.1', dingtalk: '2.1.0', feishu: '1.8.5', wecom: '4.0.2', qq: '1.3.0' };
-                          const isLatest = Object.entries(RECOMMENDED).every(([k, v]) => claw.pluginVersions[k as keyof typeof claw.pluginVersions] === v);
-                          return (
-                            <div className="flex items-center gap-2 whitespace-nowrap">
-                              <span className={`text-xs font-medium ${isLatest ? 'text-green-600' : 'text-red-500'}`}>{isLatest ? '是' : '否'}</span>
-                              <button
-                                className="text-xs text-gray-600 hover:text-gray-900 transition-colors"
-                                onClick={() => setPluginVersionTarget(claw)}
-                              >
-                                查看详情
-                              </button>
-                            </div>
-                          );
-                        })()}
+                        <button
+                          className="text-xs text-gray-600 hover:text-gray-900 transition-colors whitespace-nowrap"
+                          onClick={() => setPluginVersionTarget(claw)}
+                        >
+                          查看详情
+                        </button>
                       </td>
                       {/* 操作 */}
                       <td className="px-4 py-4">
@@ -1274,7 +1265,7 @@ export default function OpenClawMonitor() {
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">实例</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前版本</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前状态</th>
-                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">插件是否最新版本</th>
+                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">插件版本</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">操作</th>
                 </tr>
               </thead>
@@ -1307,11 +1298,12 @@ export default function OpenClawMonitor() {
                         </span>
                       </td>
                       <td className="px-4 py-2.5">
-                        {(() => {
-                          const RECOMMENDED: Record<string, string> = { wechat: '3.2.1', dingtalk: '2.1.0', feishu: '1.8.5', wecom: '4.0.2', qq: '1.3.0' };
-                          const isLatest = Object.entries(RECOMMENDED).every(([k, v]) => c.pluginVersions[k as keyof typeof c.pluginVersions] === v);
-                          return <span className={`text-xs font-medium ${isLatest ? 'text-green-600' : 'text-red-500'}`}>{isLatest ? '是' : '否'}</span>;
-                        })()}
+                        <button
+                          className="text-xs text-gray-600 hover:text-gray-900 transition-colors whitespace-nowrap"
+                          onClick={() => { setShowBatchUpgradeDialog(false); setPluginVersionTarget(c); }}
+                        >
+                          查看详情
+                        </button>
                       </td>
                       <td className="px-4 py-2.5">
                         <button
