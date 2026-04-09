@@ -36,7 +36,7 @@ import {
   Terminal, UserRoundCog, Power, MoreHorizontal, RotateCcw, HardDriveDownload,
   Activity, Loader2, ExternalLink, ChevronDown, Filter, HelpCircle, X, Eye, EyeOff,
   Server, CheckCircle2, PowerOff, Layers, ArrowUp, ArrowDown, Zap, BarChart3,
-  MessageCircle, RotateCw, Check, ArrowLeftRight
+  MessageCircle, RotateCw, Check, ArrowLeftRight, CircleArrowUp
 } from "lucide-react";
 import {
   Popover, PopoverContent, PopoverTrigger,
@@ -708,7 +708,7 @@ export default function OpenClawMonitor() {
                   : "bg-white text-gray-400 border-gray-200 cursor-not-allowed"
               }`}
             >
-              <ArrowUp className="w-3.5 h-3.5" />
+              <CircleArrowUp className="w-3.5 h-3.5" />
               批量更新{selectedIds.size > 0 ? `（${selectedIds.size}）` : ""}
             </button>
             {/* 智能体迁移按鈕 */}
@@ -725,11 +725,12 @@ export default function OpenClawMonitor() {
             <thead>
               <tr className="border-b border-gray-50 bg-gray-50/50 relative">
                 {/* 复选框列 */}
-                <th className="px-4 py-3" style={{ width: '44px' }}>
+                <th className="px-4 py-3 text-center" style={{ width: '56px' }}>
                   <Checkbox
                     checked={isAllSelected ? true : isIndeterminate ? "indeterminate" : false}
                     onCheckedChange={(v) => handleSelectAll(!!v)}
                     disabled={selectableIds.length === 0}
+                    className="size-[18px] border-2 border-gray-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500 data-[state=indeterminate]:bg-blue-500 data-[state=indeterminate]:border-blue-500"
                   />
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '16%' : '22%' }}>名称 / ID</th>
@@ -825,7 +826,7 @@ export default function OpenClawMonitor() {
                   return (
                     <tr key={claw.id} className="hover:bg-gray-50/50 transition-colors">
                       {/* 复选框 */}
-                      <td className="px-4 py-4">
+                      <td className="px-4 py-4 text-center">
                         {checkboxDisabled ? (
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -839,6 +840,7 @@ export default function OpenClawMonitor() {
                           <Checkbox
                             checked={selectedIds.has(claw.id)}
                             onCheckedChange={(v) => handleSelectOne(claw.id, !!v)}
+                            className="size-[18px] border-2 border-gray-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                           />
                         )}
                       </td>
