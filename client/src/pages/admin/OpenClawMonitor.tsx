@@ -736,13 +736,15 @@ export default function OpenClawMonitor() {
             <thead>
               <tr className="border-b border-gray-50 bg-gray-50/50 relative">
                 {/* 复选框列 */}
-                <th className="px-4 py-3 text-center" style={{ width: '56px' }}>
-                  <Checkbox
-                    checked={isAllSelected ? true : isIndeterminate ? "indeterminate" : false}
-                    onCheckedChange={(v) => handleSelectAll(!!v)}
-                    disabled={selectableIds.length === 0}
-                    className="size-[18px] border-2 border-gray-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500 data-[state=indeterminate]:bg-blue-500 data-[state=indeterminate]:border-blue-500"
-                  />
+                <th className="px-4 py-3" style={{ width: '80px' }}>
+                  <div className="flex items-center gap-1.5">
+                    <Checkbox
+                      checked={isAllSelected ? true : isIndeterminate ? "indeterminate" : false}
+                      onCheckedChange={(v) => handleSelectAll(!!v)}
+                      className="size-[18px] border-2 border-gray-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500 data-[state=indeterminate]:bg-blue-500 data-[state=indeterminate]:border-blue-500"
+                    />
+                    <span className="text-xs font-medium text-gray-500">全选</span>
+                  </div>
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '16%' : '22%' }}>名称 / ID</th>
                 {hasOneid && (
@@ -837,12 +839,15 @@ export default function OpenClawMonitor() {
                   return (
                     <tr key={claw.id} className="hover:bg-gray-50/50 transition-colors">
                       {/* 复选框 */}
-                      <td className="px-4 py-4 text-center">
+                      <td className="px-4 py-4">
                         {checkboxDisabled ? (
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <span className="inline-flex">
-                                <Checkbox checked={false} disabled />
+                                <Checkbox
+                                  checked={false}
+                                  className="size-[18px] border-2 border-gray-300 opacity-40 cursor-not-allowed"
+                                />
                               </span>
                             </TooltipTrigger>
                             <TooltipContent side="top" className="text-xs">{checkboxTooltip}</TooltipContent>
@@ -1160,7 +1165,7 @@ export default function OpenClawMonitor() {
       <Dialog open={showBatchUpgradeDialog} onOpenChange={setShowBatchUpgradeDialog}>
         <DialogContent className="sm:max-w-[480px]">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold text-gray-900">确认批量更新</DialogTitle>
+            <DialogTitle className="text-base font-bold text-gray-900">批量更新</DialogTitle>
           </DialogHeader>
           <div className="space-y-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
             <p>1. 更新版本预计需要 5～10 分钟不等，期间 OpenClaw 实例不可使用。</p>
@@ -1174,16 +1179,35 @@ export default function OpenClawMonitor() {
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">实例名称</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">ID</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前版本</th>
+                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前状态</th>
+                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">操作</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {claws.filter(c => selectedIds.has(c.id)).map(c => (
-                  <tr key={c.id} className="hover:bg-gray-50/50">
-                    <td className="px-4 py-2.5 text-gray-900 font-medium">{c.name}</td>
-                    <td className="px-4 py-2.5 text-gray-400 font-mono text-xs">{c.instanceId}</td>
-                    <td className="px-4 py-2.5 text-gray-500 font-mono text-xs">{c.version}</td>
-                  </tr>
-                ))}
+                {claws.filter(c => selectedIds.has(c.id)).map(c => {
+                  const sc = STATUS_CONFIG[c.status];
+                  return (
+                    <tr key={c.id} className="hover:bg-gray-50/50">
+                      <td className="px-4 py-2.5 text-gray-900 font-medium">{c.name}</td>
+                      <td className="px-4 py-2.5 text-gray-400 font-mono text-xs">{c.instanceId}</td>
+                      <td className="px-4 py-2.5 text-gray-500 font-mono text-xs">{c.version}</td>
+                      <td className="px-4 py-2.5">
+                        <span className={`${sc.badgeClass} text-xs inline-flex items-center gap-1`}>
+                          <span className={`w-1.5 h-1.5 rounded-full inline-block flex-shrink-0 ${sc.dotColor}`} />
+                          {sc.label}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <button
+                          onClick={() => setSelectedIds(prev => { const n = new Set(prev); n.delete(c.id); return n; })}
+                          className="text-xs text-red-500 hover:text-red-700 transition-colors"
+                        >
+                          移除
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
