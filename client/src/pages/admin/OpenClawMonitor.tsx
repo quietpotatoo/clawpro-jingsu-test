@@ -1011,11 +1011,10 @@ export default function OpenClawMonitor() {
                       {/* 插件版本 */}
                       <td className="px-4 py-4">
                         <button
-                          className="inline-flex items-center justify-center w-7 h-7 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                          className="text-xs text-blue-500 hover:text-blue-700 transition-colors whitespace-nowrap"
                           onClick={() => setPluginVersionTarget(claw)}
-                          title="查看插件版本"
                         >
-                          <Layers className="w-4 h-4" />
+                          查看详情
                         </button>
                       </td>
                       {/* 操作 */}
@@ -1252,7 +1251,7 @@ export default function OpenClawMonitor() {
 
       {/* 批量更新确认弹窗 */}
       <Dialog open={showBatchUpgradeDialog} onOpenChange={setShowBatchUpgradeDialog}>
-        <DialogContent className="sm:max-w-[480px]">
+        <DialogContent className="sm:max-w-[960px]">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-gray-900">批量更新</DialogTitle>
           </DialogHeader>
