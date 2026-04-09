@@ -294,8 +294,8 @@ export default function OpenClawMonitor() {
     setPage(1);
   };
 
-  // 判断某实例是否可选（运行中 且 非最新版本）
-  const isUpgradable = (claw: Claw) => claw.status === "running" && claw.version !== LATEST_VERSION;
+  // 判断某实例是否可选（仅要运行中即可选）
+  const isUpgradable = (claw: Claw) => claw.status === "running";
 
   const handleSelectAll = (checked: boolean) => {
     setSelectedIds(prev => {
@@ -932,11 +932,8 @@ export default function OpenClawMonitor() {
                   const statusConfig = STATUS_CONFIG[claw.status];
 
                   const upgradable = isUpgradable(claw);
-                  const isLatest = claw.version === LATEST_VERSION;
                   const checkboxDisabled = !upgradable;
-                  const checkboxTooltip = !upgradable
-                    ? (isLatest ? "该实例已为最新版本，无需更新" : "仅运行中状态下支持升级")
-                    : "";
+                  const checkboxTooltip = !upgradable ? "仅运行中状态下支持升级" : "";
 
                   return (
                     <tr key={claw.id} className="hover:bg-gray-50/50 transition-colors">
@@ -1260,6 +1257,7 @@ export default function OpenClawMonitor() {
             <p>2. OpenClaw 版本将会升级至当前生效镜像对应的版本（{LATEST_VERSION}），如果这不是您的目标版本，请先将目标镜像指定为生效状态再执行升级操作。</p>
             <p>3. 更新后模型、通道、技能和记忆，以及用户个人数据均不会丢失。</p>
           </div>
+          <p className="text-sm text-gray-600">已选择 <span className="font-semibold text-gray-900">{selectedIds.size}</span> 个实例</p>
           <div className="max-h-64 overflow-y-auto border border-gray-100 rounded-xl">
             <table className="w-full text-sm">
               <thead>
@@ -1287,7 +1285,12 @@ export default function OpenClawMonitor() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-2.5 text-gray-500 font-mono text-xs">{c.version}</td>
+                      <td className="px-4 py-2.5">
+                        <span className="font-mono text-xs text-gray-500">{c.version}</span>
+                        {c.version === LATEST_VERSION && (
+                          <span className="ml-1 text-xs text-green-500">最新</span>
+                        )}
+                      </td>
                       <td className="px-4 py-2.5">
                         <span className={`${sc.badgeClass} text-xs inline-flex items-center gap-1`}>
                           <span className={`w-1.5 h-1.5 rounded-full inline-block flex-shrink-0 ${sc.dotColor}`} />
