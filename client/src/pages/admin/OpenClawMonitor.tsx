@@ -1265,7 +1265,11 @@ export default function OpenClawMonitor() {
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">实例</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前版本</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前状态</th>
-                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">插件版本</th>
+                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">微信</th>
+                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">飞书</th>
+                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">钉钉</th>
+                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">企业微信</th>
+                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">QQ</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">操作</th>
                 </tr>
               </thead>
@@ -1298,12 +1302,19 @@ export default function OpenClawMonitor() {
                         </span>
                       </td>
                       <td className="px-4 py-2.5">
-                        <button
-                          className="text-xs text-gray-600 hover:text-gray-900 transition-colors whitespace-nowrap"
-                          onClick={() => { setShowBatchUpgradeDialog(false); setPluginVersionTarget(c); }}
-                        >
-                          查看详情
-                        </button>
+                        <span className="text-xs font-mono text-gray-700">{c.pluginVersions.wechat || '-'}</span>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <span className="text-xs font-mono text-gray-700">{c.pluginVersions.feishu || '-'}</span>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <span className="text-xs font-mono text-gray-700">{c.pluginVersions.dingtalk || '-'}</span>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <span className="text-xs font-mono text-gray-700">{c.pluginVersions.wecom || '-'}</span>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <span className="text-xs font-mono text-gray-700">{c.pluginVersions.qq || '-'}</span>
                       </td>
                       <td className="px-4 py-2.5">
                         <button
