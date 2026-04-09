@@ -856,7 +856,7 @@ export default function OpenClawMonitor() {
                 </th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '10%' : '11%' }}>创建人</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '10%' : '11%' }}>创建时间</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '10%' : '12%' }}>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '8%' : '10%' }}>
                   <div className="flex items-center gap-2 relative z-40">
                     智能体版本
                     <button
