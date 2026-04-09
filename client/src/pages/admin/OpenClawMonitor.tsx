@@ -33,7 +33,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import {
   Search, Bot, Trash2, ChevronLeft, ChevronRight, RefreshCw, AlertCircle,
-  Terminal, UserRoundCog, Power, MoreHorizontal, RotateCcw, HardDriveDownload,
+  Terminal, Power, MoreHorizontal, RotateCcw, HardDriveDownload,
   Activity, Loader2, ExternalLink, ChevronDown, Filter, HelpCircle, X, Eye, EyeOff,
   Server, CheckCircle2, PowerOff, Layers, ArrowUp, ArrowDown, Zap, BarChart3,
   MessageCircle, RotateCw, Check, ArrowLeftRight, CircleArrowUp
@@ -332,11 +332,6 @@ export default function OpenClawMonitor() {
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
-
-  // 权限开关
-  const [allowTerminal, setAllowTerminal] = useState(() => {
-    return localStorage.getItem("admin_allow_terminal") === "true";
-  });
 
   // 计算统计数据
   const countByStatus = (status: ClawStatus | ClawStatus[]) => {
@@ -1142,29 +1137,6 @@ export default function OpenClawMonitor() {
           </div>
         </div>
 
-        {/* 底部权限开关区域 */}
-        <div className="mt-6 bg-white rounded-2xl border border-gray-100 overflow-hidden"
-          style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)" }}>
-          <div className="flex items-center justify-between px-6 py-5">
-            <div className="flex items-center gap-4">
-              <div className="w-9 h-9 rounded-xl bg-orange-500 flex items-center justify-center shrink-0">
-                <UserRoundCog className="text-white" style={{ width: "18px", height: "18px" }} />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900">允许成员进入 OpenClaw 终端</p>
-                <p className="text-xs text-gray-400 mt-0.5">开启后，所有用户在用户端可看到「进入终端」选项，进入对应 OpenClaw 云服务器的终端</p>
-              </div>
-            </div>
-            <Switch
-              checked={allowTerminal}
-              onCheckedChange={(v) => {
-                setAllowTerminal(v);
-                localStorage.setItem("admin_allow_terminal", String(v));
-                toast.success(v ? "已允许成员进入终端" : "已禁止成员进入终端");
-              }}
-            />
-          </div>
-        </div>
       </div>
 
       {/* 关机/开机确认弹窗 */}
