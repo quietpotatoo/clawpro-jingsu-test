@@ -699,18 +699,29 @@ export default function OpenClawMonitor() {
               </div>
             </div>
             {/* 批量更新按鈕 */}
-            <button
-              onClick={() => setShowBatchUpgradeDialog(true)}
-              disabled={selectedIds.size === 0}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-colors ${
-                selectedIds.size > 0
-                  ? "bg-blue-500 hover:bg-blue-600 text-white border-blue-500"
-                  : "bg-white text-gray-600 border-gray-200 cursor-not-allowed opacity-60"
-              }`}
-            >
-              <CircleArrowUp className="w-3.5 h-3.5" />
-              批量更新{selectedIds.size > 0 ? `（${selectedIds.size}）` : ""}
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="inline-flex">
+                  <Button
+                    onClick={() => selectedIds.size > 0 && setShowBatchUpgradeDialog(true)}
+                    disabled={selectedIds.size === 0}
+                    style={selectedIds.size > 0 ? { background: "linear-gradient(135deg, #007AFF, #5856D6)" } : {}}
+                    className={`text-white rounded-lg text-sm font-medium px-3 h-9 gap-1.5 transition-all ${
+                      selectedIds.size === 0 ? "bg-gray-300 cursor-not-allowed" : "btn-primary-glow"
+                    }`}
+                  >
+                    <CircleArrowUp className="w-3.5 h-3.5" />
+                    批量更新
+                    {selectedIds.size > 0 && (
+                      <span className="ml-0.5 px-1.5 py-0.5 bg-white/20 rounded text-xs">{selectedIds.size}</span>
+                    )}
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              {selectedIds.size === 0 && (
+                <TooltipContent side="bottom" className="text-xs">请先选择实例</TooltipContent>
+              )}
+            </Tooltip>
             {/* 智能体迁移按鈕 */}
             <Link href="/admin/agent-migration">
               <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors">
@@ -881,15 +892,11 @@ export default function OpenClawMonitor() {
                       {/* 智能体版本 */}
                       <td className="px-4 py-4">
                         <div className="flex flex-col">
-                          <span className={`text-xs font-medium ${
-                            claw.version === LATEST_VERSION ? "text-green-600" : "text-gray-700"
-                          }`}>OpenClaw</span>
-                          <span className={`text-xs font-mono ${
-                            claw.version === LATEST_VERSION ? "text-green-500" : "text-gray-400"
-                          }`}>
+                          <span className="text-xs font-medium text-gray-500">OpenClaw</span>
+                          <span className="text-xs font-mono text-gray-500">
                             {claw.version}
                             {claw.version === LATEST_VERSION && (
-                              <span className="ml-1 text-xs text-green-500 font-sans">最新</span>
+                              <span className="ml-1 text-xs text-green-500 font-sans font-normal">最新</span>
                             )}
                           </span>
                         </div>
