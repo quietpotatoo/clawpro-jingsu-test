@@ -940,7 +940,7 @@ export default function OpenClawMonitor() {
                               <span className="inline-flex">
                                 <Checkbox
                                   checked={false}
-                                  className="size-[18px] border-2 border-gray-200 cursor-not-allowed"
+                                  className={`size-[18px] border-2 border-gray-200 cursor-not-allowed${isAllSelected || isIndeterminate ? ' opacity-40' : ''}`}
                                 />
                               </span>
                             </TooltipTrigger>
@@ -1264,7 +1264,7 @@ export default function OpenClawMonitor() {
           <div className="space-y-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
             <p>1. 更新版本预计需要 5～10 分钟不等，期间 OpenClaw 实例不可使用。</p>
             <p>2. OpenClaw 版本将会升级至当前生效镜像对应的版本（{LATEST_VERSION}），如果这不是您的目标版本，请先将目标镜像指定为生效状态再执行升级操作。</p>
-            <p>3. 更新后模型（Models）、通道（Channels）、技能（Skills）和记忆均不会丢失。</p>
+            <p>3. 更新后模型、通道、技能和记忆，以及用户个人数据均不会丢失。</p>
           </div>
           <div className="max-h-64 overflow-y-auto border border-gray-100 rounded-xl">
             <table className="w-full text-sm">
