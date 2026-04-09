@@ -1383,7 +1383,7 @@ export default function OpenClawMonitor() {
                       }
                     </div>
                   );
-                })
+                })}
               </div>
             </div>
           )}
