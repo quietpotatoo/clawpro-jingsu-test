@@ -994,7 +994,7 @@ export default function OpenClawMonitor() {
                       {/* 创建时间 */}
                       <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-500">{claw.createTime}</td>
                       {/* 智能体版本 */}
-                      <td className="px-4 py-4">
+                      <td className="pl-2 pr-4 py-4">
                         <div className="flex flex-col">
                           <span className="text-xs font-medium text-gray-500">OpenClaw</span>
                           <span className="text-xs font-mono text-gray-500">
@@ -1008,7 +1008,7 @@ export default function OpenClawMonitor() {
                       {/* 插件版本 */}
                       <td className="px-4 py-4">
                         <button
-                          className="text-xs text-blue-500 hover:text-blue-700 transition-colors whitespace-nowrap"
+                          className="text-xs text-gray-600 hover:text-gray-900 transition-colors whitespace-nowrap"
                           onClick={() => setPluginVersionTarget(claw)}
                         >
                           查看详情
@@ -1331,24 +1331,43 @@ export default function OpenClawMonitor() {
 
       {/* 插件版本弹窗 */}
       <Dialog open={!!pluginVersionTarget} onOpenChange={(open) => { if (!open) setPluginVersionTarget(null); }}>
-        <DialogContent className="sm:max-w-[360px]">
+        <DialogContent className="sm:max-w-[520px]">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-gray-900">插件版本</DialogTitle>
           </DialogHeader>
           {pluginVersionTarget && (
-            <div className="space-y-1">
-              <p className="text-xs text-gray-500 mb-3">实例：<span className="font-medium text-gray-700">{pluginVersionTarget.name}</span></p>
+            <div className="space-y-3">
+              <p className="text-xs text-gray-500">实例：<span className="font-medium text-gray-700">{pluginVersionTarget.name}</span></p>
               <div className="rounded-xl border border-gray-100 overflow-hidden">
+                {/* 表头 */}
+                <div className="grid grid-cols-3 px-4 py-2 bg-gray-50/80 border-b border-gray-100">
+                  <span className="text-xs font-medium text-gray-500">插件</span>
+                  <span className="text-xs font-medium text-gray-500">当前版本</span>
+                  <span className="text-xs font-medium text-gray-500 flex items-center gap-1">
+                    建议升级版本
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="w-3 h-3 text-gray-400 cursor-help flex-shrink-0" />
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="text-xs max-w-[200px]">
+                          适配当前生效镜像中openclaw版本的最新插件版本
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
+                </div>
                 {([
-                  { label: '微信', key: 'wechat' },
-                  { label: '钉钉', key: 'dingtalk' },
-                  { label: '飞书', key: 'feishu' },
-                  { label: '企业微信', key: 'wecom' },
-                  { label: 'QQ', key: 'qq' },
-                ] as const).map(({ label, key }, idx, arr) => (
-                  <div key={key} className={`flex items-center justify-between px-4 py-2.5 ${idx < arr.length - 1 ? 'border-b border-gray-50' : ''} hover:bg-gray-50/50`}>
+                  { label: '微信', key: 'wechat', recommended: '3.2.1' },
+                  { label: '钉钉', key: 'dingtalk', recommended: '2.1.0' },
+                  { label: '飞书', key: 'feishu', recommended: '1.8.5' },
+                  { label: '企业微信', key: 'wecom', recommended: '4.0.2' },
+                  { label: 'QQ', key: 'qq', recommended: '1.3.0' },
+                ] as const).map(({ label, key, recommended }, idx, arr) => (
+                  <div key={key} className={`grid grid-cols-3 items-center px-4 py-2.5 ${idx < arr.length - 1 ? 'border-b border-gray-50' : ''} hover:bg-gray-50/50`}>
                     <span className="text-sm text-gray-600">{label}</span>
-                    <span className="text-sm font-mono text-gray-800">{pluginVersionTarget.pluginVersions[key]}</span>
+                    <span className="text-sm font-mono text-gray-700">{pluginVersionTarget.pluginVersions[key]}</span>
+                    <span className="text-sm font-mono text-gray-700">{recommended}</span>
                   </div>
                 ))}
               </div>
