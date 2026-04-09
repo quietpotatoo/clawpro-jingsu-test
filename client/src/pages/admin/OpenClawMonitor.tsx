@@ -1274,7 +1274,7 @@ export default function OpenClawMonitor() {
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">实例</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前版本</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前状态</th>
-                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">插件版本</th>
+                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">插件是否最新版本</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">操作</th>
                 </tr>
               </thead>
@@ -1307,13 +1307,11 @@ export default function OpenClawMonitor() {
                         </span>
                       </td>
                       <td className="px-4 py-2.5">
-                        <div className="space-y-0.5">
-                          <div className="text-xs text-gray-500">微信 <span className="font-mono text-gray-700">{c.pluginVersions.wechat}</span></div>
-                          <div className="text-xs text-gray-500">钉钉 <span className="font-mono text-gray-700">{c.pluginVersions.dingtalk}</span></div>
-                          <div className="text-xs text-gray-500">飞书 <span className="font-mono text-gray-700">{c.pluginVersions.feishu}</span></div>
-                          <div className="text-xs text-gray-500">企业微信 <span className="font-mono text-gray-700">{c.pluginVersions.wecom}</span></div>
-                          <div className="text-xs text-gray-500">QQ <span className="font-mono text-gray-700">{c.pluginVersions.qq}</span></div>
-                        </div>
+                        {(() => {
+                          const RECOMMENDED: Record<string, string> = { wechat: '3.2.1', dingtalk: '2.1.0', feishu: '1.8.5', wecom: '4.0.2', qq: '1.3.0' };
+                          const isLatest = Object.entries(RECOMMENDED).every(([k, v]) => c.pluginVersions[k as keyof typeof c.pluginVersions] === v);
+                          return <span className={`text-xs font-medium ${isLatest ? 'text-green-600' : 'text-red-500'}`}>{isLatest ? '是' : '否'}</span>;
+                        })()}
                       </td>
                       <td className="px-4 py-2.5">
                         <button
