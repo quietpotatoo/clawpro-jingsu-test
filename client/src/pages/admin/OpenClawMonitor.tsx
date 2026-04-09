@@ -1171,6 +1171,11 @@ export default function OpenClawMonitor() {
               </tbody>
             </table>
           </div>
+          <div className="space-y-2 text-xs text-gray-500 bg-gray-50 rounded-xl px-4 py-3">
+            <p>1. 更新版本预计需要 5～10 分钟不等，期间 OpenClaw 实例不可使用。</p>
+            <p>2. OpenClaw 版本将会升级至当前生效镜像对应的版本（{LATEST_VERSION}），如果这不是您的目标版本，请先将目标镜像指定为生效状态再执行升级操作。</p>
+            <p>3. 更新后模型（Models）、通道（Channels）、技能（Skills）和记忆均不会丢失。</p>
+          </div>
           <DialogFooter className="gap-2 pt-2">
             <Button variant="outline" onClick={() => setShowBatchUpgradeDialog(false)}>取消</Button>
             <Button onClick={confirmBatchUpgrade} className="bg-blue-500 hover:bg-blue-600 text-white">
