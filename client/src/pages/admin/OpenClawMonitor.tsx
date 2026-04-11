@@ -805,7 +805,7 @@ export default function OpenClawMonitor() {
             <thead>
               <tr className="border-b border-gray-50 bg-gray-50/50 relative">
                 {/* 复选框列 */}
-                <th className="pl-4 pr-1 py-3" style={{ width: '48px' }}>
+                <th className="py-3" style={{ width: '56px', minWidth: '56px', paddingLeft: '16px', paddingRight: '4px' }}>
                   <div className="flex items-center gap-1.5">
                     <Checkbox
                       checked={isAllSelected ? true : isIndeterminate ? "indeterminate" : false}
@@ -965,7 +965,7 @@ export default function OpenClawMonitor() {
                   return (
                     <tr key={claw.id} className="hover:bg-gray-50/50 transition-colors">
                       {/* 复选框 */}
-                      <td className="pl-4 pr-1 py-4">
+                      <td className="py-4" style={{ width: '56px', minWidth: '56px', paddingLeft: '16px', paddingRight: '4px' }}>
                         <Checkbox
                           checked={selectedIds.has(claw.id)}
                           onCheckedChange={(v) => handleSelectOne(claw.id, !!v)}
