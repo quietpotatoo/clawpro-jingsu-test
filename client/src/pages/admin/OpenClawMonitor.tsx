@@ -1012,9 +1012,7 @@ export default function OpenClawMonitor() {
                           <span className="text-xs font-medium text-gray-500">OpenClaw</span>
                           <span className="text-xs font-mono text-gray-500">
                             {claw.version}
-                            {claw.version === LATEST_VERSION && (
-                              <span className="ml-1 text-green-500">最新</span>
-                            )}
+
                           </span>
                         </div>
                       </td>
@@ -1311,9 +1309,7 @@ export default function OpenClawMonitor() {
                       </td>
                       <td className="px-4 py-2.5">
                         <span className="font-mono text-xs text-gray-500">{c.version}</span>
-                        {c.version === LATEST_VERSION && (
-                          <span className="ml-1 text-xs text-green-500">最新</span>
-                        )}
+
                       </td>
                       <td className="px-4 py-2.5">
                         <span className={`${sc.badgeClass} text-xs inline-flex items-center gap-1`}>
