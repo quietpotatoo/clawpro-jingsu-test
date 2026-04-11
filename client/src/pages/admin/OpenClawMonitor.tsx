@@ -90,18 +90,18 @@ const DEFAULT_PLUGIN_VERSIONS: PluginVersions = { wechat: "3.2.1", dingtalk: "2.
 const MOCK_CLAWS: Claw[] = [
   { id: "1",  instanceId: "ins-g83c6wvc", name: "Alice的助手",      creator: "alice@acompany.com",  createTime: "2025-12-01 09:12:34", status: "running",     version: "2026.3.28", pluginVersions: { wechat: "3.2.1", dingtalk: "2.8.0", feishu: "1.5.3", wecom: "2.1.4", qq: "1.0.2" } },
   { id: "2",  instanceId: "ins-h92d7xwe", name: "Bob工作助手",       creator: "bob@acompany.com",    createTime: "2025-12-15 14:05:22", status: "running",     version: "2026.4.2",  pluginVersions: { wechat: "3.3.0", dingtalk: "2.9.1", feishu: "1.6.0", wecom: "2.2.0", qq: "1.1.0" } },
-  { id: "3",  instanceId: "ins-j14e8yvf", name: "Carol的研究助手",   creator: "carol@acompany.com",  createTime: "2026-01-05 10:33:47", status: "running",    version: "2026.3.28", pluginVersions: { wechat: "3.2.1", dingtalk: "2.8.0", feishu: "1.5.3", wecom: "2.1.4", qq: "1.0.2" } },
+  { id: "3",  instanceId: "ins-j14e8yvf", name: "Carol的研究助手",   creator: "carol@acompany.com",  createTime: "2026-01-05 10:33:47", status: "shutdown",   version: "2026.3.28", pluginVersions: { wechat: "3.2.1", dingtalk: "2.8.0", feishu: "1.5.3", wecom: "2.1.4", qq: "1.0.2" } },
   { id: "4",  instanceId: "ins-k25f9zwg", name: "Dave的代码助手",    creator: "dave@acompany.com",   createTime: "2026-01-20 16:48:09", status: "running",     version: "2026.3.28", pluginVersions: { wechat: "3.1.5", dingtalk: "2.7.2", feishu: "1.4.8", wecom: "2.0.9", qq: "1.0.1" } },
-  { id: "5",  instanceId: "ins-l36g0axh", name: "Eve的写作助手",     creator: "eve@acompany.com",    createTime: "2026-02-10 08:21:55", status: "running",  version: "2026.3.28", pluginVersions: DEFAULT_PLUGIN_VERSIONS },
+  { id: "5",  instanceId: "ins-l36g0axh", name: "Eve的写作助手",     creator: "eve@acompany.com",    createTime: "2026-02-10 08:21:55", status: "createFail", version: "2026.3.28", pluginVersions: DEFAULT_PLUGIN_VERSIONS },
   { id: "6",  instanceId: "ins-m47h1byi", name: "Frank的数据助手",   creator: "frank@acompany.com",  createTime: "2026-02-18 11:07:30", status: "running",     version: "2026.4.2",  pluginVersions: { wechat: "3.3.0", dingtalk: "2.9.1", feishu: "1.6.0", wecom: "2.2.0", qq: "1.1.0" } },
-  { id: "7",  instanceId: "ins-n58i2czj", name: "Grace的翻译助手",   creator: "grace@acompany.com",  createTime: "2026-02-25 15:44:18", status: "running",    version: "2026.3.28", pluginVersions: DEFAULT_PLUGIN_VERSIONS },
+  { id: "7",  instanceId: "ins-n58i2czj", name: "Grace的翻译助手",   creator: "grace@acompany.com",  createTime: "2026-02-25 15:44:18", status: "creating",   version: "2026.3.28", pluginVersions: DEFAULT_PLUGIN_VERSIONS },
   { id: "8",  instanceId: "ins-o69j3dak", name: "Henry的销售助手",   creator: "henry@acompany.com",  createTime: "2026-03-01 09:58:03", status: "running",     version: "2026.3.28", pluginVersions: { wechat: "3.2.1", dingtalk: "2.8.0", feishu: "1.5.3", wecom: "2.1.4", qq: "1.0.2" } },
   { id: "9",  instanceId: "ins-p70k4ebl", name: "Ivy的客服助手",     creator: "ivy@acompany.com",    createTime: "2026-03-05 13:26:41", status: "running", version: "2026.4.2",  pluginVersions: { wechat: "3.3.0", dingtalk: "2.9.1", feishu: "1.6.0", wecom: "2.2.0", qq: "1.1.0" } },
   { id: "10", instanceId: "ins-q81l5fcm", name: "Jack的会议助手",    creator: "jack@acompany.com",   createTime: "2026-03-08 17:02:15", status: "running",     version: "2026.3.28", pluginVersions: { wechat: "3.2.0", dingtalk: "2.8.0", feishu: "1.5.2", wecom: "2.1.3", qq: "1.0.2" } },
-  { id: "11", instanceId: "ins-r92m6gdn", name: "Karen的报告助手",   creator: "karen@acompany.com",  createTime: "2026-03-09 10:15:50", status: "running",    version: "2026.3.28", pluginVersions: DEFAULT_PLUGIN_VERSIONS },
+  { id: "11", instanceId: "ins-r92m6gdn", name: "Karen的报告助手",   creator: "karen@acompany.com",  createTime: "2026-03-09 10:15:50", status: "loadFail",   version: "2026.3.28", pluginVersions: DEFAULT_PLUGIN_VERSIONS },
   { id: "12", instanceId: "ins-s03n7heo", name: "Leo的项目助手",     creator: "leo@acompany.com",    createTime: "2026-03-10 08:39:27", status: "running",     version: "2026.4.2",  pluginVersions: { wechat: "3.3.0", dingtalk: "2.9.1", feishu: "1.6.0", wecom: "2.2.0", qq: "1.1.0" } },
-  { id: "13", instanceId: "ins-t14o8ipf", name: "Mia的新助手",        creator: "mia@acompany.com",    createTime: "2026-03-12 11:00:00", status: "running",     version: "2026.3.28", pluginVersions: DEFAULT_PLUGIN_VERSIONS },
-  { id: "14", instanceId: "ins-u25p9jqg", name: "Noah的分析助手",    creator: "noah@acompany.com",   createTime: "2026-03-13 14:30:00", status: "running",     version: "2026.3.28", pluginVersions: DEFAULT_PLUGIN_VERSIONS },
+  { id: "13", instanceId: "ins-t14o8ipf", name: "Mia的新助手",        creator: "mia@acompany.com",    createTime: "2026-03-12 11:00:00", status: "maintaining", version: "2026.3.28", pluginVersions: DEFAULT_PLUGIN_VERSIONS },
+  { id: "14", instanceId: "ins-u25p9jqg", name: "Noah的分析助手",    creator: "noah@acompany.com",   createTime: "2026-03-13 14:30:00", status: "pending",    version: "2026.3.28", pluginVersions: DEFAULT_PLUGIN_VERSIONS },
   { id: "15", instanceId: "ins-v36q0krh", name: "Olivia的运营助手",  creator: "olivia@acompany.com",  createTime: "2026-03-14 09:00:00", status: "running",     version: "2026.4.2",  pluginVersions: { wechat: "3.3.0", dingtalk: "2.9.1", feishu: "1.6.0", wecom: "2.2.0", qq: "1.1.0" } },
   { id: "16", instanceId: "ins-w47r1lsi", name: "Peter的财务助手",  creator: "peter@acompany.com",   createTime: "2026-03-15 10:20:00", status: "running",     version: "2026.3.28", pluginVersions: { wechat: "3.2.1", dingtalk: "2.8.0", feishu: "1.5.3", wecom: "2.1.4", qq: "1.0.2" } },
   { id: "17", instanceId: "ins-x58s2mtj", name: "Quinn的法务助手",  creator: "quinn@acompany.com",   createTime: "2026-03-16 11:45:00", status: "running",     version: "2026.4.2",  pluginVersions: { wechat: "3.3.0", dingtalk: "2.9.1", feishu: "1.6.0", wecom: "2.2.0", qq: "1.1.0" } },
@@ -803,7 +803,7 @@ export default function OpenClawMonitor() {
             <thead>
               <tr className="border-b border-gray-50 bg-gray-50/50 relative">
                 {/* 复选框列 */}
-                <th className="pl-4 pr-2 py-3" style={{ width: '56px' }}>
+                <th className="pl-4 pr-1 py-3" style={{ width: '48px' }}>
                   <div className="flex items-center gap-1.5">
                     <Checkbox
                       checked={isAllSelected ? true : isIndeterminate ? "indeterminate" : false}
@@ -963,7 +963,7 @@ export default function OpenClawMonitor() {
                   return (
                     <tr key={claw.id} className="hover:bg-gray-50/50 transition-colors">
                       {/* 复选框 */}
-                      <td className="px-4 py-4">
+                      <td className="pl-4 pr-1 py-4">
                         <Checkbox
                           checked={selectedIds.has(claw.id)}
                           onCheckedChange={(v) => handleSelectOne(claw.id, !!v)}
@@ -1146,37 +1146,33 @@ export default function OpenClawMonitor() {
             <span className="text-xs text-gray-400">共 {statusFiltered.length} 条记录</span>
             {totalPages > 1 && (
               <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0 text-gray-500"
+                <button
                   disabled={safePage === 1}
                   onClick={() => setPage(safePage - 1)}
+                  className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 hover:text-blue-500 hover:border-blue-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="w-4 h-4" />
-                </Button>
+                </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                  <Button
+                  <button
                     key={p}
-                    variant="ghost"
-                    size="sm"
-                    className={`h-7 w-7 p-0 text-xs ${
-                      p === safePage ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-gray-500 hover:text-gray-700'
-                    }`}
                     onClick={() => setPage(p)}
+                    className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-medium transition-colors border ${
+                      p === safePage
+                        ? 'bg-blue-500 text-white border-blue-500'
+                        : 'bg-white text-gray-500 border-gray-200 hover:border-blue-300 hover:text-blue-500'
+                    }`}
                   >
                     {p}
-                  </Button>
+                  </button>
                 ))}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0 text-gray-500"
+                <button
                   disabled={safePage === totalPages}
                   onClick={() => setPage(safePage + 1)}
+                  className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 hover:text-blue-500 hover:border-blue-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <ChevronRight className="w-4 h-4" />
-                </Button>
+                </button>
               </div>
             )}
           </div>
@@ -1291,7 +1287,7 @@ export default function OpenClawMonitor() {
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">实例</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前版本</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前状态</th>
-                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">插件是否最新版本</th>
+                  <th className="text-center px-4 py-2 text-xs font-medium text-gray-500">插件是否最新版本</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">操作</th>
                 </tr>
               </thead>
@@ -1323,7 +1319,7 @@ export default function OpenClawMonitor() {
                           {sc.label}
                         </span>
                       </td>
-                      <td className="px-4 py-2.5">
+                      <td className="px-4 py-2.5 text-center">
                         {(() => {
                           const RECOMMENDED: PluginVersions = { wechat: '3.2.1', dingtalk: '2.1.0', feishu: '1.8.5', wecom: '4.0.2', qq: '1.3.0' };
                           const isLatest = (['wechat', 'dingtalk', 'feishu', 'wecom', 'qq'] as const).every(
