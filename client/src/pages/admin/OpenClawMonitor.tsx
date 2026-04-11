@@ -1278,7 +1278,7 @@ export default function OpenClawMonitor() {
           </DialogHeader>
           <div className="space-y-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
             <p>1. 更新版本预计需要 5～10 分钟不等，期间 OpenClaw 实例不可使用。</p>
-            <p>2. OpenClaw 版本将会升级至当前生效镜像对应的版本（{LATEST_VERSION}），如果这不是您的目标版本，请先将目标镜像指定为生效状态再执行升级操作。</p>
+            <p>2. OpenClaw 版本将会升级至当前生效镜像对应的版本，请先将目标镜像指定为生效状态再执行升级操作。</p>
             <p>3. 更新后模型、通道、技能和记忆，以及用户个人数据均不会丢失。</p>
           </div>
           <p className="text-sm text-gray-600">已选择 <span className="font-semibold text-gray-900">{selectedIds.size}</span> 个实例</p>
