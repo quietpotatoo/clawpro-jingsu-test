@@ -308,9 +308,9 @@ export default function OpenClawMonitor() {
   const handleSelectAll = (checked: boolean) => {
     setSelectedIds(prev => {
       const next = new Set(prev);
-      // 全选勾选当前页所有实例，不限状态
-      if (checked) { pageIds.forEach(id => next.add(id)); }
-      else { pageIds.forEach(id => next.delete(id)); }
+      // 全选勾选当前筛选结果的所有页所有实例，不限状态
+      if (checked) { allFilteredIds.forEach(id => next.add(id)); }
+      else { allFilteredIds.forEach(id => next.delete(id)); }
       return next;
     });
   };
@@ -475,12 +475,14 @@ export default function OpenClawMonitor() {
   const safePage = Math.min(page, totalPages);
   const paginated = versionFiltered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
-  // 当前页所有实例 id（全选范围）
+  // 当前页所有实例 id
   const pageIds = paginated.map(c => c.id);
-  // 全选状态只看当前页：当前页所有实例都已勾选则显示全选
-  const isAllSelected = pageIds.length > 0 && pageIds.every(id => selectedIds.has(id));
-  // 部分勾选：当前页有且仅有部分实例被勾选
-  const isIndeterminate = !isAllSelected && pageIds.some(id => selectedIds.has(id));
+  // 全筛选结果的所有 id（全选范围）
+  const allFilteredIds = versionFiltered.map(c => c.id);
+  // 全选状态：当前筛选结果所有实例全部被勾选
+  const isAllSelected = allFilteredIds.length > 0 && allFilteredIds.every(id => selectedIds.has(id));
+  // 部分勾选：有且仅有部分实例被勾选（不显示 indeterminate，直接显示未勾选）
+  const isIndeterminate = false;
 
   // 批量更新按钮禁用逻辑
   const selectedCount = selectedIds.size;
@@ -1327,13 +1329,13 @@ export default function OpenClawMonitor() {
                           );
                           return isLatest
                             ? <span className="text-xs text-green-600">是</span>
-                            : <span className="text-xs text-orange-500">否</span>;
+                            : <span className="text-xs text-red-500">否</span>;
                         })()}
                       </td>
                       <td className="px-4 py-2.5">
                         <button
                           onClick={() => setSelectedIds(prev => { const n = new Set(prev); n.delete(c.id); return n; })}
-                          className="text-xs text-red-500 hover:text-red-700 transition-colors whitespace-nowrap"
+                          className="text-xs text-gray-600 hover:text-gray-900 transition-colors whitespace-nowrap"
                         >
                           移除
                         </button>
