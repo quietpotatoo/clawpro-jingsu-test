@@ -805,7 +805,7 @@ export default function OpenClawMonitor() {
             <thead>
               <tr className="border-b border-gray-50 bg-gray-50/50 relative">
                 {/* 复选框列 */}
-                <th className="py-3" style={{ width: '56px', minWidth: '56px', paddingLeft: '16px', paddingRight: '4px' }}>
+                <th className="py-3" style={{ width: '40px', minWidth: '40px', paddingLeft: '12px', paddingRight: '0px' }}>
                   <div className="flex items-center gap-1.5">
                     <Checkbox
                       checked={isAllSelected ? true : isIndeterminate ? "indeterminate" : false}
@@ -815,7 +815,7 @@ export default function OpenClawMonitor() {
                     <span className="text-xs font-medium text-gray-500 whitespace-nowrap">全选</span>
                   </div>
                 </th>
-                <th className="text-left pr-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '12%' : '16%', paddingLeft: '4px' }}>名称 / ID</th>
+                <th className="text-left pr-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '12%' : '16%', paddingLeft: '0px' }}>名称 / ID</th>
                 {hasOneid && (
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide w-[18%]">用户归属</th>
                 )}
@@ -965,7 +965,7 @@ export default function OpenClawMonitor() {
                   return (
                     <tr key={claw.id} className="hover:bg-gray-50/50 transition-colors">
                       {/* 复选框 */}
-                      <td className="py-4" style={{ width: '56px', minWidth: '56px', paddingLeft: '16px', paddingRight: '4px' }}>
+                      <td className="py-4" style={{ width: '40px', minWidth: '40px', paddingLeft: '12px', paddingRight: '0px' }}>
                         <Checkbox
                           checked={selectedIds.has(claw.id)}
                           onCheckedChange={(v) => handleSelectOne(claw.id, !!v)}
@@ -973,7 +973,7 @@ export default function OpenClawMonitor() {
                         />
                       </td>
                       {/* 名称/ID */}
-                      <td className="pr-4 py-4" style={{ paddingLeft: '4px' }}>
+                      <td className="pr-4 py-4" style={{ paddingLeft: '0px' }}>
                         <div className="flex items-center gap-2.5">
                           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0">
                             <Bot className="w-3.5 h-3.5 text-white" />
