@@ -477,7 +477,9 @@ export default function OpenClawMonitor() {
 
   // 当前页所有实例 id（全选范围）
   const pageIds = paginated.map(c => c.id);
+  // 全选状态只看当前页：当前页所有实例都已勾选则显示全选
   const isAllSelected = pageIds.length > 0 && pageIds.every(id => selectedIds.has(id));
+  // 部分勾选：当前页有且仅有部分实例被勾选
   const isIndeterminate = !isAllSelected && pageIds.some(id => selectedIds.has(id));
 
   // 批量更新按钮禁用逻辑
@@ -806,16 +808,16 @@ export default function OpenClawMonitor() {
                     <Checkbox
                       checked={isAllSelected ? true : isIndeterminate ? "indeterminate" : false}
                       onCheckedChange={(v) => handleSelectAll(!!v)}
-                      className="size-[18px] border-2 border-gray-200 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500 data-[state=indeterminate]:bg-blue-500 data-[state=indeterminate]:border-blue-500"
+                      className="size-4 border border-gray-300 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500 data-[state=indeterminate]:bg-blue-500 data-[state=indeterminate]:border-blue-500"
                     />
                     <span className="text-xs font-medium text-gray-500 whitespace-nowrap">全选</span>
                   </div>
                 </th>
-                <th className="text-left pl-2 pr-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '13%' : '18%' }}>名称 / ID</th>
+                <th className="text-left pl-2 pr-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '12%' : '16%' }}>名称 / ID</th>
                 {hasOneid && (
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide w-[18%]">用户归属</th>
                 )}
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '8%' : '12%' }}>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '7%' : '10%' }}>
                   <div className="flex items-center gap-2 relative z-40">
                     当前状态
                     <button
@@ -876,8 +878,8 @@ export default function OpenClawMonitor() {
                     )}
                   </div>
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '12%' : '13%' }}>创建人</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '12%' : '13%' }}>创建时间</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '13%' : '15%' }}>创建人</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '13%' : '15%' }}>创建时间</th>
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '10%' : '12%' }}>
                   <div className="flex items-center gap-2 relative z-40">
                     智能体版本
@@ -965,7 +967,7 @@ export default function OpenClawMonitor() {
                         <Checkbox
                           checked={selectedIds.has(claw.id)}
                           onCheckedChange={(v) => handleSelectOne(claw.id, !!v)}
-                          className="size-[18px] border-2 border-gray-200 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                          className="size-4 border border-gray-300 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                         />
                       </td>
                       {/* 名称/ID */}
@@ -1141,27 +1143,42 @@ export default function OpenClawMonitor() {
 
           {/* Pagination */}
           <div className="px-6 py-3 border-t border-gray-50 flex items-center justify-between">
-            <span className="text-xs text-gray-400">
-              共 {statusFiltered.length} 条记录
-              {statusFiltered.length > 0 && `，第 ${safePage} / ${totalPages} 页`}
-            </span>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setPage(Math.max(1, safePage - 1))}
-                disabled={safePage === 1}
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-400 hover:text-blue-500 hover:border-blue-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <span className="text-xs text-gray-400 px-2">第 {safePage} 页</span>
-              <button
-                onClick={() => setPage(Math.min(totalPages, safePage + 1))}
-                disabled={safePage === totalPages}
-                className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-400 hover:text-blue-500 hover:border-blue-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+            <span className="text-xs text-gray-400">共 {statusFiltered.length} 条记录</span>
+            {totalPages > 1 && (
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0 text-gray-500"
+                  disabled={safePage === 1}
+                  onClick={() => setPage(safePage - 1)}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <Button
+                    key={p}
+                    variant="ghost"
+                    size="sm"
+                    className={`h-7 w-7 p-0 text-xs ${
+                      p === safePage ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                    onClick={() => setPage(p)}
+                  >
+                    {p}
+                  </Button>
+                ))}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0 text-gray-500"
+                  disabled={safePage === totalPages}
+                  onClick={() => setPage(safePage + 1)}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -1257,7 +1274,7 @@ export default function OpenClawMonitor() {
 
       {/* 批量更新确认弹窗 */}
       <Dialog open={showBatchUpgradeDialog} onOpenChange={setShowBatchUpgradeDialog}>
-        <DialogContent className="sm:max-w-[960px]">
+        <DialogContent className="sm:max-w-[640px]">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-gray-900">批量更新</DialogTitle>
           </DialogHeader>
@@ -1274,7 +1291,7 @@ export default function OpenClawMonitor() {
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">实例</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前版本</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">当前状态</th>
-                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">插件版本</th>
+                  <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">插件是否最新版本</th>
                   <th className="text-left px-4 py-2 text-xs font-medium text-gray-500">操作</th>
                 </tr>
               </thead>
@@ -1307,20 +1324,15 @@ export default function OpenClawMonitor() {
                         </span>
                       </td>
                       <td className="px-4 py-2.5">
-                        <div className="space-y-0.5">
-                          {[
-                            { label: '微信', val: c.pluginVersions.wechat },
-                            { label: '飞书', val: c.pluginVersions.feishu },
-                            { label: '钉钉', val: c.pluginVersions.dingtalk },
-                            { label: '企业微信', val: c.pluginVersions.wecom },
-                            { label: 'QQ', val: c.pluginVersions.qq },
-                          ].map(({ label, val }) => (
-                            <div key={label} className="flex items-center gap-1.5">
-                              <span className="text-xs text-gray-400 w-12 shrink-0">{label}</span>
-                              <span className="text-xs font-mono text-gray-700">{val || '-'}</span>
-                            </div>
-                          ))}
-                        </div>
+                        {(() => {
+                          const RECOMMENDED: PluginVersions = { wechat: '3.2.1', dingtalk: '2.1.0', feishu: '1.8.5', wecom: '4.0.2', qq: '1.3.0' };
+                          const isLatest = (['wechat', 'dingtalk', 'feishu', 'wecom', 'qq'] as const).every(
+                            k => c.pluginVersions[k] === RECOMMENDED[k]
+                          );
+                          return isLatest
+                            ? <span className="text-xs text-green-600">是</span>
+                            : <span className="text-xs text-orange-500">否</span>;
+                        })()}
                       </td>
                       <td className="px-4 py-2.5">
                         <button
