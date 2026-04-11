@@ -294,14 +294,15 @@ export default function OpenClawMonitor() {
     setPage(1);
   };
 
-  // 判断某实例是否可选（仅要运行中即可选）
+  // 判断某实例是否可更新（仅运行中）
   const isUpgradable = (claw: Claw) => claw.status === "running";
 
   const handleSelectAll = (checked: boolean) => {
     setSelectedIds(prev => {
       const next = new Set(prev);
-      if (checked) { selectableIds.forEach(id => next.add(id)); }
-      else { selectableIds.forEach(id => next.delete(id)); }
+      // 全选勾选当前页所有实例，不限状态
+      if (checked) { pageIds.forEach(id => next.add(id)); }
+      else { pageIds.forEach(id => next.delete(id)); }
       return next;
     });
   };
@@ -462,14 +463,27 @@ export default function OpenClawMonitor() {
     return selectedVersions.has(getVersionKey(c.version));
   });
 
-  // 当前筛选结果中可选的实例
-  const selectableIds = versionFiltered.filter(isUpgradable).map(c => c.id);
-  const isAllSelected = selectableIds.length > 0 && selectableIds.every(id => selectedIds.has(id));
-  const isIndeterminate = !isAllSelected && selectableIds.some(id => selectedIds.has(id));
-
   const totalPages = Math.max(1, Math.ceil(versionFiltered.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
   const paginated = versionFiltered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+  // 当前页所有实例 id（全选范围）
+  const pageIds = paginated.map(c => c.id);
+  const isAllSelected = pageIds.length > 0 && pageIds.every(id => selectedIds.has(id));
+  const isIndeterminate = !isAllSelected && pageIds.some(id => selectedIds.has(id));
+
+  // 批量更新按钮禁用逻辑
+  const selectedCount = selectedIds.size;
+  const selectedClaws = claws.filter(c => selectedIds.has(c.id));
+  const hasNonRunning = selectedClaws.some(c => !isUpgradable(c));
+  const batchDisabled = selectedCount === 0 || selectedCount > 20 || hasNonRunning;
+  const batchTooltip = selectedCount === 0
+    ? '请先选择实例'
+    : selectedCount > 20
+    ? '批量更新数量不可大于20'
+    : hasNonRunning
+    ? '仅运行中的实例支持更新'
+    : '';
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -746,23 +760,23 @@ export default function OpenClawMonitor() {
               <TooltipTrigger asChild>
                 <span className="inline-flex">
                   <Button
-                    onClick={() => selectedIds.size > 0 && setShowBatchUpgradeDialog(true)}
-                    disabled={selectedIds.size === 0}
-                    style={selectedIds.size > 0 ? { background: "linear-gradient(135deg, #007AFF, #5856D6)" } : {}}
+                    onClick={() => !batchDisabled && setShowBatchUpgradeDialog(true)}
+                    disabled={batchDisabled}
+                    style={!batchDisabled ? { background: "linear-gradient(135deg, #007AFF, #5856D6)" } : {}}
                     className={`text-white rounded-lg text-sm font-medium px-3 h-9 gap-1.5 transition-all ${
-                      selectedIds.size === 0 ? "bg-gray-300 cursor-not-allowed" : "btn-primary-glow"
+                      batchDisabled ? "bg-gray-300 cursor-not-allowed" : "btn-primary-glow"
                     }`}
                   >
                     <CircleArrowUp className="w-3.5 h-3.5" />
                     批量更新
-                    {selectedIds.size > 0 && (
-                      <span className="ml-0.5 px-1.5 py-0.5 bg-white/20 rounded text-xs">{selectedIds.size}</span>
+                    {selectedCount > 0 && (
+                      <span className="ml-0.5 px-1.5 py-0.5 bg-white/20 rounded text-xs">{selectedCount}</span>
                     )}
                   </Button>
                 </span>
               </TooltipTrigger>
-              {selectedIds.size === 0 && (
-                <TooltipContent side="bottom" className="text-xs">请先选择实例</TooltipContent>
+              {batchDisabled && batchTooltip && (
+                <TooltipContent side="bottom" className="text-xs">{batchTooltip}</TooltipContent>
               )}
             </Tooltip>
             {/* 智能体迁移按鈕 */}
@@ -932,32 +946,19 @@ export default function OpenClawMonitor() {
                   const statusConfig = STATUS_CONFIG[claw.status];
 
                   const upgradable = isUpgradable(claw);
-                  const checkboxDisabled = !upgradable;
-                  const checkboxTooltip = !upgradable ? "仅运行中状态下支持升级" : "";
+                  // 所有状态均可勾选，不再禁用复选框
+                  const checkboxDisabled = false;
+                  const checkboxTooltip = "";
 
                   return (
                     <tr key={claw.id} className="hover:bg-gray-50/50 transition-colors">
                       {/* 复选框 */}
                       <td className="px-4 py-4">
-                        {checkboxDisabled ? (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <span className="inline-flex">
-                                <Checkbox
-                                  checked={false}
-                                  className="size-[18px] border-2 border-gray-200 cursor-not-allowed opacity-40"
-                                />
-                              </span>
-                            </TooltipTrigger>
-                            <TooltipContent side="top" className="text-xs">{checkboxTooltip}</TooltipContent>
-                          </Tooltip>
-                        ) : (
-                          <Checkbox
-                            checked={selectedIds.has(claw.id)}
-                            onCheckedChange={(v) => handleSelectOne(claw.id, !!v)}
-                            className="size-[18px] border-2 border-gray-200 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
-                          />
-                        )}
+                        <Checkbox
+                          checked={selectedIds.has(claw.id)}
+                          onCheckedChange={(v) => handleSelectOne(claw.id, !!v)}
+                          className="size-[18px] border-2 border-gray-200 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                        />
                       </td>
                       {/* 名称/ID */}
                       <td className="pl-2 pr-4 py-4">
