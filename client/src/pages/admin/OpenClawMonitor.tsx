@@ -817,7 +817,7 @@ export default function OpenClawMonitor() {
                 </th>
                 <th className="text-left pr-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '12%' : '16%', paddingLeft: '0px' }}>名称 / ID</th>
                 {hasOneid && (
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide w-[18%]">用户归属</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide w-[13%]">用户归属</th>
                 )}
                 <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide" style={{ width: hasOneid ? '7%' : '10%' }}>
                   <div className="flex items-center gap-2 relative z-40">
@@ -1579,7 +1579,7 @@ export default function OpenClawMonitor() {
                     <table className="w-full text-sm table-fixed">
                       <colgroup>
                         <col style={{ width: '30%' }} />
-                        <col style={{ width: '18%' }} />
+                        <col style={{ width: '13%' }} />
                         <col style={{ width: '28%' }} />
                         <col style={{ width: '24%' }} />
                       </colgroup>
