@@ -71,11 +71,12 @@ export function AgentCombobox({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-full justify-between px-3 py-2 h-9 text-sm",
+            "w-full justify-between px-3 py-2 h-9 text-sm font-normal bg-white hover:bg-white",
+            !value && "text-muted-foreground",
             className
           )}
         >
-          <span className="truncate text-gray-700">{displayText}</span>
+          <span className="truncate">{displayText}</span>
           <div className="flex items-center gap-1">
             {value && (
               <X

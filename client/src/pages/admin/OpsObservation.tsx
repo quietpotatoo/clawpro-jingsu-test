@@ -3,7 +3,7 @@
  * Design: 「流动蓝图」Fluid Blueprint
  * - 标题、副标题、卡片、icon 与其他子页面保持一致
  */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { AlertCircle, ArrowUpRight, RefreshCw, BarChart3, TrendingUp, Activity, Zap, CheckCircle2, AlertTriangle, Info, Download } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,51 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Eye, EyeOff } from "lucide-react";
 import { AgentCombobox } from "@/components/OpenClawCombobox";
+import { type FilterSection, type TreeNodeData } from "@/components/GroupMultiFilter";
+import { CollectScopePopover } from "@/components/CollectScopePopover";
+import { GroupSingleFilter } from "@/components/GroupSingleFilter";
+import { QueryLimitExceededError } from "@/components/QueryLimitExceededError";
+import { findNode } from "@/components/groupTreeShared";
+import { MOCK_DEPARTMENTS, type DepartmentNode } from "@/lib/mockData";
+import { MOCK_MANUAL_GROUPS } from "@/pages/admin/MemberManagement/mock";
+import type { UserGroup } from "@/pages/admin/MemberManagement/types";
+import { useAdminMode } from "@/contexts/AdminModeContext";
+import { useClsCollectScope } from "@/hooks/useClsCollectScope";
 import { toast } from "sonner";
+
+// ─── 分组筛选器的两个分区（部门 + 自定义分组），文件级常量避免每次渲染重建 ───
+function deptToTreeNode(d: DepartmentNode): TreeNodeData {
+  return { id: d.id, name: d.name, children: d.children?.map(deptToTreeNode) };
+}
+function userGroupsToForest(groups: UserGroup[]): TreeNodeData[] {
+  const byId = new Map<string, TreeNodeData>();
+  groups.forEach((g) => byId.set(g.id, { id: g.id, name: g.name, children: [] }));
+  const roots: TreeNodeData[] = [];
+  groups.forEach((g) => {
+    const node = byId.get(g.id)!;
+    if (g.parentId && byId.has(g.parentId)) {
+      byId.get(g.parentId)!.children!.push(node);
+    } else {
+      roots.push(node);
+    }
+  });
+  return roots;
+}
+// 两个分区分别定义，组件内根据 OneID / 普通模式动态拼接
+const DEPT_SECTION: FilterSection = { key: "dept", label: "部门", roots: MOCK_DEPARTMENTS.map(deptToTreeNode) };
+const CUSTOM_SECTION: FilterSection = { key: "custom", label: "自定义分组", roots: userGroupsToForest(MOCK_MANUAL_GROUPS) };
+
+/**
+ * Mock：会触发"查询范围过大"错误的"大分组"id 集合。
+ * 包含公司根节点 + 二级部门 + 包含 2 个以上子分组的自定义分组。
+ * 真实环境下应由后端在查询失败时返回错误码标识。
+ */
+const MOCK_LARGE_GROUP_IDS = new Set<string>([
+  "dept-root",       // A公司（最大）
+  "dept-tech",       // 技术部
+  "dept-product",    // 产品部
+  "mgrp-rd",         // 自定义分组：研发组（含前端/后端子组）
+]);
 
 // Mock data for charts
 const logLevelData = [
@@ -253,6 +297,29 @@ export default function OpsObservation() {
   const [showFreeQuotaDialog, setShowFreeQuotaDialog] = useState(false);
   const [freeQuotaAgreed, setFreeQuotaAgreed] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState(""); // Agent 名称筛选
+  const [selectedGroups, setSelectedGroups] = useState<string>(""); // 分组单选筛选：空串 = 全部分组；非空 = 具体分组 id
+  const { hasOneid } = useAdminMode();
+  // 分组分区：OneID 模式有部门+自定义分组；普通模式只有自定义分组
+  const filterSections = useMemo<FilterSection[]>(
+    () => (hasOneid ? [DEPT_SECTION, CUSTOM_SECTION] : [CUSTOM_SECTION]),
+    [hasOneid],
+  );
+  /**
+   * Mock：是否触发"查询超限"错误态。
+   * 触发条件：选了"大分组"（实例数过多）且未指定具体 Agent。
+   * 真实环境下应由后端返回错误码标识，前端仅据此展示。
+   */
+  const isQueryLimitExceeded = useMemo(
+    () => selectedGroups !== "" && !selectedAgent && MOCK_LARGE_GROUP_IDS.has(selectedGroups),
+    [selectedGroups, selectedAgent],
+  );
+  // 被选中的分组显示名（用于错误态文案）
+  const selectedGroupName = useMemo(
+    () => (selectedGroups ? findNode(filterSections, selectedGroups)?.name : undefined),
+    [selectedGroups, filterSections],
+  );
+  // CLS 开启范围（全局共享）：开启 CLS 时决定哪些分组下实例的日志会被采集
+  const { scope: collectScope, setScope: setCollectScope, resetScope: resetCollectScope } = useClsCollectScope();
   const [showPluginUpgradeDialog, setShowPluginUpgradeDialog] = useState(false);
   const [selectedPluginVersion, setSelectedPluginVersion] = useState<any>(null);
   const [isUpgradingPlugin, setIsUpgradingPlugin] = useState(false);
@@ -413,15 +480,21 @@ export default function OpsObservation() {
     }
   };
 
+  /**
+   * 关闭 CLS（整体关闭所有分组）
+   * 如需仅关闭部分分组，请使用顶部"开启范围"组件调整。
+   */
   const handleCloseCls = () => {
     setIsClosingCls(true);
     setTimeout(() => {
       setClsEnabled(false);
       localStorage.setItem("globalClsEnabled", "false");
+      // 关闭 CLS 时清空开启范围（下次开启时从"全部"开始）
+      resetCollectScope();
       setIsClosingCls(false);
       setShowCloseClsConfirm(false);
       setDeleteLogTopic(false);
-      const message = deleteLogTopic ? "CLS 日志服务已关闭，日志主题资源已删除" : "CLS 日志服务已关闭";
+      // const message = deleteLogTopic ? "CLS 日志服务已关闭，日志主题资源已删除" : "CLS 日志服务已关闭";
       // toast.success(message);
     }, 1000);
   };
@@ -488,6 +561,21 @@ export default function OpsObservation() {
               >
                 {isEnablingCls ? "开启中..." : "开启 CLS 日志服务"}
               </Button>
+            </div>
+
+            {/* 开启范围选择（OneID 模式：部门+自定义分组；普通模式：仅自定义分组）；未选 = 采集全部实例 */}
+            <div className="mt-4 pt-4 border-t border-blue-100 flex items-center gap-3 flex-wrap">
+              <span className="text-xs font-medium text-blue-900 flex-shrink-0">开启范围</span>
+              <CollectScopePopover
+                sections={filterSections}
+                value={collectScope}
+                onChange={setCollectScope}
+                triggerWidth={180}
+                placeholder="选择开启范围"
+              />
+              <span className="text-xs text-blue-600/80">
+                未选择时将采集所有实例的日志，可能消耗较多 CLS 配额。
+              </span>
             </div>
           </div>
 
@@ -705,17 +793,37 @@ export default function OpsObservation() {
       {/* 已开启时显示搜索框 + 关闭button */}
       {clsEnabled && (
         <div className="flex items-start justify-between mb-6 gap-4">
-          {/* 左侧：Agent 名称筛选 */}
-          <div className="flex-1">
-            <label className="text-xs font-medium text-gray-700 block mb-2">Agent名称：</label>
-            <AgentCombobox
-              value={selectedAgent}
-              onValueChange={setSelectedAgent}
-              className="max-w-xs"
-            />
+          {/* 左侧：分组筛选 + Agent 名称 */}
+          <div className="flex-1 flex items-end gap-4 flex-wrap">
+            <div>
+              <label className="text-xs font-medium text-gray-700 block mb-2">分组</label>
+              <GroupSingleFilter
+                sections={filterSections}
+                value={selectedGroups}
+                onChange={setSelectedGroups}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-700 block mb-2">Agent</label>
+              <AgentCombobox
+                value={selectedAgent}
+                onValueChange={setSelectedAgent}
+                className="max-w-xs"
+              />
+            </div>
           </div>
-            {/* 右侧：升级和关闭CLS按钮 */}
-          <div className="flex gap-2 mt-6">
+            {/* 右侧：开启范围 + 升级和关闭CLS按钮 */}
+          <div className="flex items-center gap-2 mt-6">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-gray-500">开启范围</span>
+              <CollectScopePopover
+                sections={filterSections}
+                value={collectScope}
+                onChange={setCollectScope}
+                triggerWidth={150}
+                placeholder="全部用户"
+              />
+            </div>
             <Button
               onClick={() => setShowPluginUpgradeDialog(true)}
               variant="outline"
@@ -734,8 +842,10 @@ export default function OpsObservation() {
         </div>
       )}
 
-      {/* Metric Cards - 仅在 CLS 启用时显示 */}
-      {clsEnabled && (
+      {/* Metric Cards - 仅在 CLS 启用时显示；超限时替代为错误态 */}
+      {clsEnabled && (isQueryLimitExceeded ? (
+        <QueryLimitExceededError groupName={selectedGroupName} />
+      ) : (
         <>
       <div className="grid grid-cols-5 gap-4 mb-8">
         {METRIC_CARDS.map((card, idx) => {
@@ -927,7 +1037,7 @@ export default function OpsObservation() {
         </div>
       </div>
         </>
-      )}
+      ))}
 
         {/* CLS 授权 Dialog */}
       <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
@@ -1017,7 +1127,7 @@ export default function OpsObservation() {
         </DialogContent>
       </Dialog>
 
-      {/* 关闭CLS确认对话框 */}
+      {/* 关闭CLS确认对话框（整体关闭） */}
       <Dialog open={showCloseClsConfirm} onOpenChange={setShowCloseClsConfirm}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
@@ -1040,11 +1150,20 @@ export default function OpsObservation() {
               </div>
             </div>
 
+            {/* 提示：本弹窗只做整体关闭，局部关闭请用"开启范围" */}
+            <div className="flex gap-2 text-xs text-blue-700 bg-blue-50 border border-blue-100 p-2.5 rounded">
+              <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+              <span>
+                本操作将整体关闭 CLS 服务。如需仅关闭部分分组，请改用页面顶部的
+                <span className="font-medium">「开启范围」</span>进行调整。
+              </span>
+            </div>
+
             {/* 删除日志主题资源选项 */}
             <div className="border-t pt-3 space-y-2">
               <div className="flex items-start gap-3">
-                <Checkbox 
-                  id="deleteLogTopic" 
+                <Checkbox
+                  id="deleteLogTopic"
                   checked={deleteLogTopic}
                   onCheckedChange={(checked) => setDeleteLogTopic(checked === true)}
                   className="mt-1"

@@ -5,12 +5,23 @@
  */
 import { useState, useMemo, useEffect } from "react";
 import { useLocation } from "wouter";
-import { MessageCircle, RotateCw, Zap, Globe, ArrowUpRight, CheckCircle2, RefreshCw, ArrowUp, ArrowDown, BarChart3, Activity, TrendingUp, AlertTriangle, Info } from "lucide-react";
+import { MessageCircle, RotateCw, Zap, Globe, ArrowUpRight, CheckCircle2, RefreshCw, ArrowUp, ArrowDown, BarChart3, Activity, TrendingUp, AlertTriangle, Info, Download } from "lucide-react";
+import { Tooltip as UITooltip, TooltipContent as UITooltipContent, TooltipTrigger as UITooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AgentCombobox } from "@/components/OpenClawCombobox";
+import { type FilterSection, type TreeNodeData } from "@/components/GroupMultiFilter";
+import { CollectScopePopover } from "@/components/CollectScopePopover";
+import { GroupSingleFilter, getSingleGroupFilterIds } from "@/components/GroupSingleFilter";
+import { QueryLimitExceededError } from "@/components/QueryLimitExceededError";
+import { findNode } from "@/components/groupTreeShared";
+import { MOCK_DEPARTMENTS, type DepartmentNode } from "@/lib/mockData";
+import { MOCK_MANUAL_GROUPS } from "@/pages/admin/MemberManagement/mock";
+import type { UserGroup } from "@/pages/admin/MemberManagement/types";
+import { useAdminMode } from "@/contexts/AdminModeContext";
+import { useClsCollectScope } from "@/hooks/useClsCollectScope";
 import {
   BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie,
@@ -26,11 +37,8 @@ interface CLSPluginVersion {
 }
 
 const CLS_PLUGIN_VERSIONS: CLSPluginVersion[] = [
-  { version: "v5", releaseDate: "2026-03-24", changelog: "修复会话追踪精度问题，优化 Token 计算算法", status: "available" },
-  { version: "v4", releaseDate: "2026-03-17", changelog: "新增会话全局监控功能，支持多渠道分析", status: "available" },
-  { version: "v3", releaseDate: "2026-03-10", changelog: "优化日志采集性能，降低 CPU 占用率", status: "current" },
-  { version: "v2", releaseDate: "2026-03-03", changelog: "修复 CLS 连接超时问题", status: "deprecated" },
-  { version: "v1", releaseDate: "2026-02-24", changelog: "首次发布 CLS 采集插件", status: "deprecated" },
+  { version: "v2", releaseDate: "2026-03-03", changelog: "支持采集 trace 数据", status: "available" },
+  { version: "v1", releaseDate: "2026-02-24", changelog: "首次发布 CLS 采集插件", status: "current" },
 ];
 
 // ─── Mock 数据 ────────────────────────────────────────────────────────────────
@@ -83,8 +91,11 @@ const MODEL_DIST_DATA = [
   { name: "deepseek-v3.2", value: 5, color: "#60a5fa" },
 ];
 
-// Mock 会话数据
-const MOCK_SESSIONS = [
+// Mock 会话数据（OneID 模式下按 departmentId / groupIds 关联分组，用于"按分组筛选"）
+const SESSION_DEPT_IDS = ["dept-fe", "dept-be", "dept-ai", "dept-pm", "dept-design", "dept-ops", "dept-hr"] as const;
+// 自定义分组（manual）id 取自 MemberManagement/mock.ts 的 MOCK_MANUAL_GROUPS
+const SESSION_MANUAL_GROUP_IDS = ["mgrp-product", "mgrp-rd", "mgrp-rd-fe", "mgrp-rd-be", "mgrp-design", "mgrp-ops"] as const;
+const RAW_MOCK_SESSIONS = [
   {
     id: "c3b2ac3c",
     name: "System: [2026-03-09 16:10]",
@@ -208,6 +219,78 @@ const MOCK_SESSIONS = [
   },
 ];
 
+// 给每条会话分配 departmentId + groupIds + agentName（按顺序循环映射）
+// agentName 与 OpenClawCombobox 的内置 OPENCLAW_LIST 对齐，确保 Agent 筛选器能命中
+// 故意混入两个长名字（Agent-C / Agent-G）演示 truncate + hover tooltip 效果
+const SESSION_AGENT_NAMES = [
+  "Agent-A", "Agent-B",
+  "运行中-长名字示例-Agent-C-用于演示截断",
+  "Agent-D", "Agent-E", "Agent-F",
+  "运维巡检-Agent-G-Special-Long-Name",
+  "Agent-H",
+] as const;
+const MOCK_SESSIONS = RAW_MOCK_SESSIONS.map((s, i) => ({
+  ...s,
+  departmentId: SESSION_DEPT_IDS[i % SESSION_DEPT_IDS.length],
+  // 让每条会话随机挂 1~2 个自定义分组，保证筛选有视觉反馈
+  groupIds: [
+    SESSION_MANUAL_GROUP_IDS[i % SESSION_MANUAL_GROUP_IDS.length],
+    ...(i % 3 === 0 ? [SESSION_MANUAL_GROUP_IDS[(i + 2) % SESSION_MANUAL_GROUP_IDS.length]] : []),
+  ],
+  agentName: SESSION_AGENT_NAMES[i % SESSION_AGENT_NAMES.length],
+}));
+
+// ─── CSV 导出工具 ────────────────────────────────────────────────────────────
+function makeCsvBlob(header: string, rows: string[]): Blob {
+  return new Blob(["\uFEFF" + header + "\n" + rows.join("\n")], { type: "text/csv;charset=utf-8" });
+}
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+/** CSV 字段转义：包含逗号、引号、换行的字段需用双引号包裹，并把内部引号 double 化 */
+function csvCell(v: string | number): string {
+  const s = String(v);
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+// ─── 分组筛选器的两个分区（部门 + 自定义分组），文件级常量避免每次渲染重建 ───
+function deptToTreeNode(d: DepartmentNode): TreeNodeData {
+  return { id: d.id, name: d.name, children: d.children?.map(deptToTreeNode) };
+}
+function userGroupsToForest(groups: UserGroup[]): TreeNodeData[] {
+  const byId = new Map<string, TreeNodeData>();
+  groups.forEach((g) => byId.set(g.id, { id: g.id, name: g.name, children: [] }));
+  const roots: TreeNodeData[] = [];
+  groups.forEach((g) => {
+    const node = byId.get(g.id)!;
+    if (g.parentId && byId.has(g.parentId)) {
+      byId.get(g.parentId)!.children!.push(node);
+    } else {
+      roots.push(node);
+    }
+  });
+  return roots;
+}
+// 两个分区分别定义，组件内根据 OneID / 普通模式动态拼接
+const DEPT_SECTION: FilterSection = { key: "dept", label: "部门", roots: MOCK_DEPARTMENTS.map(deptToTreeNode) };
+const CUSTOM_SECTION: FilterSection = { key: "custom", label: "自定义分组", roots: userGroupsToForest(MOCK_MANUAL_GROUPS) };
+
+/**
+ * Mock：会触发"查询范围过大"错误的"大分组"id 集合。
+ * 真实环境下由后端在查询失败时返回错误码标识。
+ */
+const MOCK_LARGE_GROUP_IDS = new Set<string>([
+  "dept-root",       // A公司（最大）
+  "dept-tech",       // 技术部
+  "dept-product",    // 产品部
+  "mgrp-rd",         // 自定义分组：研发组
+]);
+
 // 工具函数
 function toDateStr(d: Date) {
   return d.toISOString().slice(0, 10);
@@ -231,7 +314,11 @@ export default function SessionManagement() {
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "cron" | "groups">("all");
   const [, navigate] = useLocation();
   const [clsEnabled, setClsEnabled] = useState(() => {
-    const stored = localStorage.getItem("globalClsEnabled");
+    // 旧版会话管理使用独立的 key，与全局 globalClsEnabled 隔离
+    // 这样在旧版本页面内的开/关 CLS 操作不会影响新版/运维观测/Tokens 监控
+    // 默认 true：用户从新版降级到此页面时应直接看到已开启的完整数据
+    const stored = localStorage.getItem("clsEnabled_sessionMgmt_legacy");
+    if (stored === null) return true;
     return stored === "true";
   });
   const [isEnablingCls, setIsEnablingCls] = useState(false);
@@ -258,6 +345,28 @@ export default function SessionManagement() {
   const [showFreeQuotaDialog, setShowFreeQuotaDialog] = useState(false);
   const [freeQuotaAgreed, setFreeQuotaAgreed] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState(""); // Agent 名称筛选
+  const [selectedGroups, setSelectedGroups] = useState<string>(""); // 分组单选筛选：空串 = 全部分组；非空 = 具体分组 id
+  const { hasOneid } = useAdminMode();
+  // 分组分区：OneID 模式有部门+自定义分组；普通模式只有自定义分组
+  const filterSections = useMemo<FilterSection[]>(
+    () => (hasOneid ? [DEPT_SECTION, CUSTOM_SECTION] : [CUSTOM_SECTION]),
+    [hasOneid],
+  );
+  /**
+   * Mock：是否触发"查询超限"错误态。
+   * 触发条件：选了"大分组"且未指定具体 Agent。
+   * 真实环境下由后端返回错误码标识。
+   */
+  const isQueryLimitExceeded = useMemo(
+    () => selectedGroups !== "" && !selectedAgent && MOCK_LARGE_GROUP_IDS.has(selectedGroups),
+    [selectedGroups, selectedAgent],
+  );
+  const selectedGroupName = useMemo(
+    () => (selectedGroups ? findNode(filterSections, selectedGroups)?.name : undefined),
+    [selectedGroups, filterSections],
+  );
+  // CLS 开启范围（全局共享）：开启 CLS 时决定哪些分组下实例的日志会被采集
+  const { scope: collectScope, setScope: setCollectScope, resetScope: resetCollectScope } = useClsCollectScope();
   const [sortColumn, setSortColumn] = useState<"tokens" | "cost" | "updatedAt">("updatedAt");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
@@ -277,11 +386,11 @@ export default function SessionManagement() {
     setTimeout(() => { setRefreshing(false); }, 1000);
   };
 
-  // 监听 localStorage 变化，实现跨页面同步
+  // 监听 localStorage 变化（仅响应本页独立 key，不受全局 CLS 状态影响）
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "globalClsEnabled") {
-        setClsEnabled(e.newValue === "true");
+      if (e.key === "clsEnabled_sessionMgmt_legacy") {
+        setClsEnabled(e.newValue === null ? true : e.newValue === "true");
       }
     };
     window.addEventListener("storage", handleStorageChange);
@@ -291,7 +400,21 @@ export default function SessionManagement() {
   // 筛选和排序会话
   const filteredSessions = useMemo(() => {
     let sessions = [...MOCK_SESSIONS];
-    
+
+    // 分组筛选（单选 + 子树包含语义，两种模式通用）
+    // 会话命中条件：departmentId 在选中子树 OR 任一 groupId 在选中子树
+    if (selectedGroups !== "") {
+      const allowedIds = getSingleGroupFilterIds(filterSections, selectedGroups);
+      sessions = sessions.filter(
+        (s) => allowedIds.has(s.departmentId) || s.groupIds.some((gid) => allowedIds.has(gid)),
+      );
+    }
+
+    // Agent 名称筛选（精确匹配；空串 = 全部 Agent，跳过）
+    if (selectedAgent !== "") {
+      sessions = sessions.filter((s) => s.agentName === selectedAgent);
+    }
+
     // 排序逻辑
     sessions.sort((a, b) => {
       let aVal: any = a[sortColumn];
@@ -320,7 +443,7 @@ export default function SessionManagement() {
     });
     
     return sessions;
-  }, [sortColumn, sortDirection]);
+  }, [sortColumn, sortDirection, filterSections, selectedGroups, selectedAgent]);
 
   // 分页处理
   const paginatedSessions = useMemo(() => {
@@ -412,7 +535,7 @@ export default function SessionManagement() {
     setIsEnablingCls(true);
     setTimeout(() => {
       setClsEnabled(true);
-      localStorage.setItem('globalClsEnabled', 'true');
+      localStorage.setItem('clsEnabled_sessionMgmt_legacy', 'true');
       setIsEnablingCls(false);
       setShowSuccessMessage(true);
       setFreeQuotaAgreed(false);
@@ -437,7 +560,7 @@ export default function SessionManagement() {
     // 模拟 loading 1.5 秒
     setTimeout(() => {
       setClsEnabled(true);
-      localStorage.setItem('globalClsEnabled', 'true');
+      localStorage.setItem('clsEnabled_sessionMgmt_legacy', 'true');
       setIsEnablingCls(false);
       setShowSuccessMessage(true);
       setShowClsAgreementDialog(false);
@@ -449,22 +572,43 @@ export default function SessionManagement() {
     }, 1500);
   };
 
+  /**
+   * 关闭 CLS（整体关闭所有分组）
+   * 如需仅关闭部分分组，请使用顶部"开启范围"组件调整。
+   */
   const handleCloseCls = () => {
     setIsClosingCls(true);
     setTimeout(() => {
       setClsEnabled(false);
-      localStorage.setItem("globalClsEnabled", "false");
+      localStorage.setItem("clsEnabled_sessionMgmt_legacy", "false");
+      resetCollectScope();
       setIsClosingCls(false);
       setShowCloseClsConfirm(false);
       setDeleteLogTopic(false);
-      const message = deleteLogTopic ? "CLS 日志服务已关闭，日志主题资源已删除" : "CLS 日志服务已关闭";
-      // toast.success(message);
     }, 1000);
   };
 
   const handleCloseClsConfirmCancel = () => {
     setShowCloseClsConfirm(false);
     setDeleteLogTopic(false);
+  };
+
+  /**
+   * 导出当前筛选结果到 CSV（与 TokensMonitor 的导出体验一致）
+   * - 跟随当前 selectedGroups / selectedAgent 过滤后的 filteredSessions
+   * - 文件名带时间戳，方便用户区分多次导出
+   */
+  const handleExportSessions = () => {
+    const tid = toast.loading("正在导出会话列表");
+    setTimeout(() => {
+      const header = "Agent名称,会话,会话ID,模型,轮次,Tokens,成本,更新时间";
+      const rows = filteredSessions.map((s) =>
+        [s.agentName, s.name, s.id, s.model, 28, s.tokens, s.cost, s.updatedAt].map(csvCell).join(","),
+      );
+      const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+      downloadBlob(makeCsvBlob(header, rows), `sessions_${stamp}.csv`);
+      toast.dismiss(tid);
+    }, 3000);
   };
 
   return (
@@ -520,6 +664,21 @@ export default function SessionManagement() {
               >
                 {isEnablingCls ? "开启中..." : "开启 CLS 日志服务"}
               </Button>
+            </div>
+
+            {/* 开启范围选择（OneID 模式：部门+自定义分组；普通模式：仅自定义分组）；未选 = 采集全部实例 */}
+            <div className="mt-4 pt-4 border-t border-blue-100 flex items-center gap-3 flex-wrap">
+              <span className="text-xs font-medium text-blue-900 flex-shrink-0">开启范围</span>
+              <CollectScopePopover
+                sections={filterSections}
+                value={collectScope}
+                onChange={setCollectScope}
+                triggerWidth={180}
+                placeholder="选择开启范围"
+              />
+              <span className="text-xs text-blue-600/80">
+                未选择时将采集所有实例的日志，可能消耗较多 CLS 配额。
+              </span>
             </div>
           </div>
 
@@ -628,17 +787,37 @@ export default function SessionManagement() {
       {/* 已开启时显示搜索框 + 关闭按钮 */}
       {clsEnabled && (
         <div className="flex items-start justify-between mb-6 gap-4">
-          {/* 左侧：Agent 名称筛选 */}
-          <div className="flex-1">
-            <label className="text-xs font-medium text-gray-700 block mb-2">Agent名称：</label>
-            <AgentCombobox
-              value={selectedAgent}
-              onValueChange={setSelectedAgent}
-              className="max-w-xs"
-            />
+          {/* 左侧：分组筛选 + Agent 名称 */}
+          <div className="flex-1 flex items-end gap-4 flex-wrap">
+            <div>
+              <label className="text-xs font-medium text-gray-700 block mb-2">分组</label>
+              <GroupSingleFilter
+                sections={filterSections}
+                value={selectedGroups}
+                onChange={setSelectedGroups}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-700 block mb-2">Agent</label>
+              <AgentCombobox
+                value={selectedAgent}
+                onValueChange={setSelectedAgent}
+                className="max-w-xs"
+              />
+            </div>
           </div>
-           {/* 右侧：升级CLS插件 + 关闭CLS按钮 */}
+           {/* 右侧：开启范围 + 升级CLS插件 + 关闭CLS按钮 */}
           <div className="flex items-center gap-2 mt-6">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-gray-500">开启范围</span>
+              <CollectScopePopover
+                sections={filterSections}
+                value={collectScope}
+                onChange={setCollectScope}
+                triggerWidth={150}
+                placeholder="全部用户"
+              />
+            </div>
             <Button
               onClick={() => setShowPluginUpgradeDialog(true)}
               variant="outline"
@@ -657,8 +836,10 @@ export default function SessionManagement() {
         </div>
       )}
 
-      {/* 仪表板 - 仅在 CLS 启用时显示 */}
-      {clsEnabled && (
+      {/* 仪表板 - 仅在 CLS 启用时显示；超限时替代为错误态 */}
+      {clsEnabled && (isQueryLimitExceeded ? (
+        <QueryLimitExceededError groupName={selectedGroupName} />
+      ) : (
         <div className="space-y-8">
           {/* 顶部指标卡 */}
           <div className="grid grid-cols-4 gap-4">
@@ -684,15 +865,29 @@ export default function SessionManagement() {
 
           {/* 会话摘要表格 */}
           <div>
-            <div className="mb-4">
-              <h2 className="text-lg font-bold text-gray-900">会话摘要一览</h2>
-              <p className="text-xs text-gray-400 mt-1">按时间倒序 · 点击查看会话详情</p>
+            <div className="mb-4 flex items-end justify-between gap-2">
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">会话摘要一览</h2>
+                <p className="text-xs text-gray-400 mt-1">按时间倒序 · 点击查看会话详情</p>
+              </div>
+              <UITooltip>
+                <UITooltipTrigger asChild>
+                  <button
+                    onClick={handleExportSessions}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 hover:text-blue-600 hover:border-blue-300 transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                  </button>
+                </UITooltipTrigger>
+                <UITooltipContent side="top" className="text-xs">导出列表</UITooltipContent>
+              </UITooltip>
             </div>
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden"
               style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)" }}>
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-50 bg-gray-50/50">
+                    <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 tracking-wide">Agent 名称</th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">会话</th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">会话 ID</th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">模型</th>
@@ -714,8 +909,25 @@ export default function SessionManagement() {
                 <tbody className="divide-y divide-gray-50">
                   {paginatedSessions.map((session) => (
                     <tr key={session.id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4 cursor-pointer" onClick={() => navigate(`/admin/session/${session.id}`)}>
-                        <div className="text-sm text-gray-700 font-medium hover:text-blue-600 transition-colors">{session.name}</div>
+                      <td className="px-6 py-4" style={{ maxWidth: '160px' }}>
+                        <UITooltip>
+                          <UITooltipTrigger asChild>
+                            <div className="text-sm text-gray-700 truncate">{session.agentName}</div>
+                          </UITooltipTrigger>
+                          <UITooltipContent side="top" className="text-xs max-w-xs break-all">{session.agentName}</UITooltipContent>
+                        </UITooltip>
+                      </td>
+                      <td
+                        className="px-6 py-4 cursor-pointer"
+                        style={{ maxWidth: '280px' }}
+                        onClick={() => navigate(`/admin/session/${session.id}`)}
+                      >
+                        <UITooltip>
+                          <UITooltipTrigger asChild>
+                            <div className="text-sm text-gray-700 font-medium hover:text-blue-600 transition-colors truncate">{session.name}</div>
+                          </UITooltipTrigger>
+                          <UITooltipContent side="top" className="text-xs max-w-xs break-all">{session.name}</UITooltipContent>
+                        </UITooltip>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600 font-mono">{session.id}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">{session.model}</td>
@@ -814,7 +1026,7 @@ export default function SessionManagement() {
             </div>
           </div>
         </div>
-      )}
+      ))}
 
       {/* CLS 授权 Dialog */}
       <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
@@ -901,7 +1113,7 @@ export default function SessionManagement() {
         </DialogContent>
       </Dialog>
 
-       {/* 关闭CLS确认对话框 */}
+       {/* 关闭CLS确认对话框（整体关闭） */}
       <Dialog open={showCloseClsConfirm} onOpenChange={setShowCloseClsConfirm}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
@@ -924,11 +1136,20 @@ export default function SessionManagement() {
               </div>
             </div>
 
+            {/* 提示：本弹窗只做整体关闭，局部关闭请用"开启范围" */}
+            <div className="flex gap-2 text-xs text-blue-700 bg-blue-50 border border-blue-100 p-2.5 rounded">
+              <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+              <span>
+                本操作将整体关闭 CLS 服务。如需仅关闭部分分组，请改用页面顶部的
+                <span className="font-medium">「开启范围」</span>进行调整。
+              </span>
+            </div>
+
             {/* 删除日志主题资源选项 */}
             <div className="border-t pt-3 space-y-2">
               <div className="flex items-start gap-3">
-                <Checkbox 
-                  id="deleteLogTopic" 
+                <Checkbox
+                  id="deleteLogTopic"
                   checked={deleteLogTopic}
                   onCheckedChange={(checked) => setDeleteLogTopic(checked === true)}
                   className="mt-1"
@@ -1029,7 +1250,8 @@ export default function SessionManagement() {
                   setIsUpgradingPlugin(false);
                   setShowPluginUpgradeDialog(false);
                   if (selectedPluginVersion) {
-                    toast.success(`成功升级到 ${selectedPluginVersion?.version}`);
+                    localStorage.setItem('clsPluginVersion', selectedPluginVersion.version);
+                    toast.success('CLS 采集插件升级成功');
                   }
                 }, 2000);
               }}
