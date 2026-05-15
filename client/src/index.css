@@ -149,8 +149,8 @@
   /* Admin Sidebar */
   --admin-sidebar-width: 232px;
   --admin-sidebar-width-collapsed: 64px;
-  --admin-sidebar-header-height: 72px;
-  --admin-sidebar-footer-height: 72px;
+  --admin-sidebar-header-height: 64px;
+  --admin-sidebar-footer-height: 64px;
   --admin-sidebar-bg: #ffffff;
   --admin-sidebar-border: #e5e5e5;
   --admin-sidebar-foreground: #0a0a0a;
