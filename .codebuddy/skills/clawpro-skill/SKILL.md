@@ -29,7 +29,7 @@ description: >
 | 字体 | Inter + DM Mono | **PingFang SC + Menlo + DIN Alternate(替代 DIN Next LT Pro) + Open Sans** |
 | 文字色阶 | gray-900 / 700 / 500 / 400 | **`#0A0A0A` / `#020617` / `#334155` / `#737373` / `#A3A3A3`** |
 | 阴影 | 双层柔和 | **三档**：卡片轻量 / Tab 滑块极轻 / 管理端配置卡中等 |
-| 响应式 | 简单网格断点 | **新增 1200/1920 规则**（用户端「我的 Agent」） |
+| 响应式 | 简单网格断点 | **新增 1200/1920 三档规则（仅用户端「我的 Agent」）**：>1920 两侧留白 / 1200–1920 自适应 / <1200 整体横滚，全程固定两列；管控端不适用 |
 
 > 历史代码若仍使用 v1 token，需在下次接触时同步迁移到 v2。所有现存原型按 v2 同步替换主色与渐变。
 
@@ -210,8 +210,7 @@ font-family: 'Open Sans', 'Helvetica Neue', sans-serif;
 | Tenant 内容区 padding | `px-6 py-8` (24px/32px) |
 | 标题区到内容区 | `mb-6` 或 `mb-8` |
 | Admin max-width | 不限（铺满主内容区 1496px） |
-| Tenant 「我的 Agent」max-width | **`max-w-[1920px] mx-auto`** + 响应式（见 §7.4） |
-| Tenant 其他页面 max-width | `max-w-7xl` |
+| Tenant 通用 max-width | **`max-w-[1920px] mx-auto`** + 三档响应式 + 左右 80px 占位带（见 §7.4，以「我的 Agent」骨架为基准，所有用户端业务页统一沿用） |
 
 ### 3.2 卡片内
 
@@ -407,26 +406,81 @@ import { SurfaceCard, SurfaceInner, SurfaceConfig } from "@/components/ui/Surfac
 | 统计卡片 | `grid-cols-3` 或 `grid-cols-5` |
 | 帮助文档 | `grid-cols-1 md:grid-cols-2` |
 
-### 7.4 响应式规则（用户端「我的 Agent」专用）
+### 7.4 响应式规则（**用户端通用骨架**，以「我的 Agent」为基准）
 
-| 屏幕宽度 | 行为 |
-|---|---|
-| **> 1920px** | 内容区固定最大宽 `1920px`，两侧自动留白延展 |
-| **1200px – 1920px** | 内容区随屏幕宽度，两侧间距自动收窄；卡片网格保持每行 **2 列** |
-| **< 1200px** | 不降级、不重排，**整体横向滚动**（`min-w-[1200px]`） |
+> ⚠️ **作用域**：本节描述的 **1200/1920 三档响应式 + 80px 占位带骨架是用户端（Tenant）所有业务页的统一基准**，**管控端（Admin）一律不适用**。
+> **设计意图**：让所有用户端 Tab/详情页在中等屏幕（笔记本）和超大屏（4K/外接显示器）上都保持一致的两侧留白节奏，视觉重心稳定居中——避免出现"切到不同 Tab 边距忽宽忽窄"的割裂感。卡片网格列数由各页内容密度自行决定，但**容器骨架完全一致**。
 
-实现：
+#### 三档断点
+
+| 屏幕宽度 | 内容区宽度 | 两侧留白 | 卡片网格 | 滚动行为 |
+|---|---|---|---|---|
+| **> 1920px**（超大屏） | **固定最大宽 1920px** | 多出部分两侧均分自动留白 | 各页按内容密度自决 | 不出现横向滚动 |
+| **1200px – 1920px**（常规） | **随屏幕宽度自适应** | 左右各 80px 占位带 + 段落 `px-[42px]` 内边距 | 各页按内容密度自决 | 不出现横向滚动 |
+| **< 1200px**（小屏） | **锁死 1200px**，整体内容固定不变形 | 占位带与内边距保持原样不再收窄 | 各页按内容密度自决 | **整体横向滚动**（`min-w-[1200px]` 强制） |
+
+#### 关键设计约束
+
+1. **统一骨架**——所有用户端业务页都使用 `min-w-[1200px] overflow-x-clip` + `max-w-[1920px] mx-auto flex` + 左右各 `w-20`（80px）占位带 + 中间 `flex-1 min-w-0` 内容区，**段落级内边距统一 `px-[42px]`**。
+2. **不做单列降级**——小屏触发整体横滚而非把卡片压扁/换行。
+3. **不做强制列数升降级**——卡片列数由各页内容密度自决（如「我的 Agent」固定 `grid-cols-2`、技能广场用 `grid-cols-3 2xl:grid-cols-4`、详情页用单列长内容），但**容器骨架完全相同**。
+4. **`min-w-[1200px]` 兜底**：写在最外层 wrapper（与 max-w 同级），确保小屏触发整体横向滚动而非内容压缩。
+
+#### 标准实现（所有用户端业务页统一沿用）
+
 ```jsx
-<div className="min-w-[1200px]">
-  <div className="max-w-[1920px] mx-auto px-6">
-    <div className="grid grid-cols-2 gap-4">
-      {/* Agent 卡片 */}
+<TenantLayout>
+  {/* 外层：min-w 兜底小屏（< 1200px 整体横滚） + overflow-x-clip 防装饰元素溢出 */}
+  <div className="min-w-[1200px] overflow-x-clip">
+    {/* 中层：max-w 限制超大屏（> 1920px 居中两侧留白） + flex 行布局承载左右占位带 */}
+    <div className="max-w-[1920px] mx-auto flex items-stretch page-enter">
+      {/* 左侧 80px 占位带 */}
+      <div aria-hidden className="shrink-0 w-20 self-stretch" />
+      {/* 中间内容区：flex-1 撑满 + min-w-0 防止子元素溢出撑爆容器 + px-[42px] py-8 段落内边距 */}
+      <div className="flex-1 min-w-0 px-[42px] py-8">
+        {/* 业务内容：卡片网格列数按内容密度自决 */}
+      </div>
+      {/* 右侧 80px 占位带 */}
+      <div aria-hidden className="shrink-0 w-20 self-stretch" />
     </div>
   </div>
-</div>
+</TenantLayout>
 ```
 
-**管理端响应式**：暂不做响应式适配，沿用固定布局（主内容区 1496px + 侧栏 232px）。
+#### 容易出错的写法（❌ 禁止）
+
+| ❌ 错误写法 | 问题 | ✅ 正确写法 |
+|---|---|---|
+| `<div className="max-w-[1920px] mx-auto">` 缺 `min-w-[1200px]` 外壳 | 小屏会把内容压扁/换行，破坏布局节奏 | 加 `min-w-[1200px]` 外壳 |
+| 直接 `max-w-[1920px] mx-auto px-6` 没有 80px 占位带 | 与「我的 Agent」两侧留白节奏不一致，切 Tab 时边距忽宽忽窄 | 套上完整骨架（左右 `w-20` 占位带 + 中间 `px-[42px]`） |
+| `grid-cols-1 md:grid-cols-2` | 小屏触发单列降级，破坏密度一致性 | 直接固定列数（如 `grid-cols-2` / `grid-cols-3`），按内容密度选择 |
+| `max-w-7xl mx-auto`（1280px） | 限宽过小，与其他用户端页面边距不一致 | 用 `max-w-[1920px]` + 占位带骨架 |
+| `min-w-screen` / `w-screen` | 触发额外横向滚动条 | 用 `min-w-[1200px]` |
+
+#### 配合 TenantLayout 的注意点
+
+- TenantLayout 已固定 Navbar `h-16` + 主内容区 `bg: 白→灰渐变`，**不要在用户端业务页内自己再套一层背景**。
+- 最外层一律加 `overflow-x-clip`，防止页面内任何 `100vw` 装饰元素（点阵/横向分隔线等）溢出触发整页横滚（与 `min-w-[1200px]` 触发的"内容横滚"互不冲突）：
+
+  ```jsx
+  <div className="min-w-[1200px] overflow-x-clip">
+    <div className="max-w-[1920px] mx-auto flex items-stretch">
+      <div aria-hidden className="shrink-0 w-20 self-stretch" />
+      <div className="flex-1 min-w-0 px-[42px] py-8">…</div>
+      <div aria-hidden className="shrink-0 w-20 self-stretch" />
+    </div>
+  </div>
+  ```
+
+#### 适用范围（重要）
+
+- ✅ **所有用户端（Tenant）业务页**：「我的 Agent」（`MyOpenClaw.tsx`）、OpenClaw 详情（`OpenClawDetail.tsx`）、技能广场（`SkillSquare.tsx`）、模型额度（`ModelQuota.tsx`）、帮助文档（`HelpDocs.tsx`）等，**统一使用本节标准骨架**，确保切换 Tab 时两侧留白节奏一致。
+- ⚠️ **窄表单类页面例外**：仅承载居中表单的纯辅助页（如 `ResetPassword.tsx` 用 `max-w-md`、登录/注册等）保留窄表单居中布局，**不套用本节骨架**（套上后窄表单与 80px 占位带视觉比例失衡）。
+- ❌ **管控端（Admin）禁止套用本规则**：管控端沿用固定布局（主内容区 1496px + 侧栏 232px），**不做任何响应式适配**，详见下方说明。
+
+---
+
+**管理端响应式**：暂不做响应式适配，沿用固定布局（主内容区 1496px + 侧栏 232px）。**不要把用户端的 `min-w-[1200px]` / `max-w-[1920px]` / 1200–1920 自适应规则套到管控端任何页面上**。
 
 ---
 
@@ -588,17 +642,25 @@ import { SurfaceConfig } from "@/components/ui/Surface";
 </SurfaceConfig>
 ```
 
-### 8.6 Tab 切换
+### 8.6 Tab 切换（Segmented Control）
+
+| 状态 | 字重 | 文字色 | 背景 | 阴影 |
+|------|------|--------|------|------|
+| **选中** | `font-medium` | `#0A0A0A` / `#020617` | `bg-white` | `var(--shadow-segment)` |
+| **未选中** | `font-normal` | `#737373` | 透明 | 无 |
+| **未选中 hover** | `font-normal` | `#0A0A0A` | 透明 | 无 |
+
+> **关键**：选中态必须加粗（`font-medium`），未选中态保持 `font-normal`，通过字重差异强化视觉区分。阴影统一使用 `var(--shadow-segment)` token，不要手写数值。
 
 ```jsx
 <div className="inline-flex items-center gap-1 p-1 bg-[#F5F5F5] rounded-[4px]">
   <button
     className="px-3 py-1 text-sm font-medium rounded-[3px] bg-white text-[#0A0A0A]"
-    style={{ boxShadow: "0px 1.11px 2.22px rgba(0,0,0,0.05)" }}
+    style={{ boxShadow: "var(--shadow-segment)" }}
   >
     全部
   </button>
-  <button className="px-3 py-1 text-sm text-[#737373] hover:text-[#0A0A0A] rounded-[3px]">
+  <button className="px-3 py-1 text-sm font-normal text-[#737373] hover:text-[#0A0A0A] rounded-[3px]">
     我创建的
   </button>
 </div>
@@ -867,7 +929,7 @@ import { SurfaceCard } from "@/components/ui/Surface";
 - [ ] 文字色使用 `#0A0A0A / #334155 / #737373 / #A3A3A3` 阶梯
 - [ ] 主品牌色统一使用 `#1447E6`（不再使用 `#007AFF`）
 - [ ] 圆角不超过 4px（除 `rounded-full`）
-- [ ] 用户端「我的 Agent」类页面应用 1200/1920 响应式规则
+- [ ] 用户端业务页统一应用「我的 Agent」骨架（§7.4）：外层 `min-w-[1200px] overflow-x-clip` + 中层 `max-w-[1920px] mx-auto flex items-stretch` + 左右各 `w-20` 占位带 + 中间 `flex-1 min-w-0 px-[42px] py-8`；卡片网格列数按内容密度自决，但容器骨架对所有用户端业务页保持一致（窄表单页如 `ResetPassword` 例外）
 - [ ] 操作反馈使用 `toast.success/error`
 - [ ] 空状态有友好提示
 - [ ] 危险操作使用 AlertDialog 确认
