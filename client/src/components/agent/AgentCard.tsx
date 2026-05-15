@@ -292,7 +292,9 @@ export const AgentCard = ({
 
       {/* ===== 元信息组：column gap 4，含两行 ===== */}
       <div className="flex flex-col" style={{ gap: "4px" }}>
-        {/* 元信息第 1 行：角色徽章 | 类型 | ID + 复制 */}
+        {/* 元信息第 1 行：Agent 标签徽章 | 类型 | ID + 复制
+            Agent 标签徽章 = roleName（如「设计师」「开发工程师」「通用助手」），
+            对齐 Figma 358:2392，徽章常驻显示（默认「通用助手」），不会因 roleName 缺省而隐藏 */}
         <div
           className="flex items-center flex-wrap"
           style={{
@@ -304,24 +306,20 @@ export const AgentCard = ({
             color: "#334155",
           }}
         >
-          {claw.roleName && (
-            <span
-              className="inline-flex items-center"
-              style={{
-                padding: "2px 6px",
-                borderRadius: "2px",
-                border: "1px solid #DAE0E9",
-                background:
-                  "linear-gradient(180deg, #FFFFFF 0%, #F9FBFC 100%)",
-                color: "#334155",
-              }}
-            >
-              {claw.roleName}
-            </span>
-          )}
-          {claw.roleName && (
-            <span style={{ color: "#E2E8F0" }}>｜</span>
-          )}
+          <span
+            className="inline-flex items-center"
+            style={{
+              padding: "2px 6px",
+              borderRadius: "2px",
+              border: "1px solid #DAE0E9",
+              background:
+                "linear-gradient(180deg, #FFFFFF 0%, #F9FBFC 100%)",
+              color: "#334155",
+            }}
+          >
+            {claw.roleName || "通用助手"}
+          </span>
+          <span style={{ color: "#E2E8F0" }}>｜</span>
           <span>类型：{typeLabel}</span>
           <span style={{ color: "#E2E8F0" }}>｜</span>
           <span className="inline-flex items-center" style={{ gap: "6px" }}>

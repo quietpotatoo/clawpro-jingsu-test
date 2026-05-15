@@ -889,7 +889,7 @@ export default function ApiDocs() {
         className="shrink-0 bg-white border-b border-gray-100 px-6"
         style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}
       >
-        <div className="h-14 flex items-center gap-4 max-w-[1400px] mx-auto">
+        <div className="h-16 flex items-center gap-4 max-w-[1400px] mx-auto">
           <button
             onClick={() => window.close()}
             onAuxClick={() => window.history.back()}

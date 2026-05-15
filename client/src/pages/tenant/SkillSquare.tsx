@@ -276,13 +276,24 @@ export default function SkillSquare() {
   if (selectedSkillId) {
     return (
       <TenantLayout>
-        <div className="page-enter max-w-6xl mx-auto px-6 py-8">
-          <SkillSquareDetail
-            skillId={selectedSkillId}
-            skills={visibleSkills}
-            onBack={() => { setSelectedSkillId(null); setInitialTab('overview'); }}
-            initialTab={initialTab}
-          />
+        {/* 与「我的 Agent」(MyOpenClaw) 完全一致的外壳骨架：
+              · min-w-[1200px] 兜底小屏（整体横滚不重排）
+              · max-w-[1920px] mx-auto 大屏限宽（两侧自动均分留白）
+              · 内层 flex：左右 w-20 (80px) 占位带 + 中间 flex-1 内容区，
+                内容区内部用 px-[42px] py-8，与「我的 Agent」段落内边距对齐 */}
+        <div className="min-w-[1200px] overflow-x-clip">
+          <div className="max-w-[1920px] mx-auto flex items-stretch page-enter">
+            <div aria-hidden className="shrink-0 w-20 self-stretch" />
+            <div className="flex-1 min-w-0 px-[42px] py-8">
+              <SkillSquareDetail
+                skillId={selectedSkillId}
+                skills={visibleSkills}
+                onBack={() => { setSelectedSkillId(null); setInitialTab('overview'); }}
+                initialTab={initialTab}
+              />
+            </div>
+            <div aria-hidden className="shrink-0 w-20 self-stretch" />
+          </div>
         </div>
       </TenantLayout>
     );
@@ -290,7 +301,16 @@ export default function SkillSquare() {
 
   return (
     <TenantLayout>
-      <div className="page-enter max-w-6xl mx-auto px-6 py-8">
+      {/* 与「我的 Agent」(MyOpenClaw) 完全一致的外壳骨架：
+            · min-w-[1200px] 兜底小屏（整体横滚不重排）
+            · max-w-[1920px] mx-auto 大屏限宽（两侧自动均分留白）
+            · 内层 flex：左右 w-20 (80px) 占位带 + 中间 flex-1 内容区
+            · 内容区内部用 px-[42px] py-8，与「我的 Agent」段落内边距对齐
+            这样技能广场两侧留白与「我的 Agent」完全一致，不会比它更宽。 */}
+      <div className="min-w-[1200px] overflow-x-clip">
+        <div className="max-w-[1920px] mx-auto flex items-stretch page-enter">
+          <div aria-hidden className="shrink-0 w-20 self-stretch" />
+          <div className="flex-1 min-w-0 px-[42px] py-8">
         {/* 页面标题 */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">企业技能</h1>
@@ -389,8 +409,8 @@ export default function SkillSquare() {
             <p className="text-gray-400 mb-4">暂无符合条件的技能</p>
           </div>
         ) : viewMode === 'card' ? (
-          /* 卡片视图 */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          /* 卡片视图：常规 3 列 / 超大屏 4 列（>1600px 时启用，配合 §7.4 三档容器） */
+          <div className="grid grid-cols-3 2xl:grid-cols-4 gap-4">
             {filteredSkills.map(skill => (
               <SkillCard
                 key={skill.id}
@@ -417,6 +437,9 @@ export default function SkillSquare() {
             </div>
           </SurfaceCard>
         )}
+          </div>
+          <div aria-hidden className="shrink-0 w-20 self-stretch" />
+        </div>
       </div>
     </TenantLayout>
   );

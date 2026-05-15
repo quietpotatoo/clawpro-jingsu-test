@@ -292,7 +292,13 @@ export default function ModelQuota() {
   return (
     <TenantLayout>
       <TooltipProvider>
-        <div className="max-w-7xl mx-auto px-8 py-8 page-enter">
+        {/* SKILL §7.4 用户端通用骨架（以「我的 Agent」为基准）：
+              外层 min-w-[1200px] overflow-x-clip + 中层 max-w-[1920px] mx-auto flex，
+              左右各 w-20 占位带 + 中间 flex-1 min-w-0 px-[42px] py-8 内容区。 */}
+        <div className="min-w-[1200px] overflow-x-clip">
+          <div className="max-w-[1920px] mx-auto flex items-stretch page-enter">
+            <div aria-hidden className="shrink-0 w-20 self-stretch" />
+            <div className="flex-1 min-w-0 px-[42px] py-8">
           {/* Header */}
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-900">模型额度</h1>
@@ -594,7 +600,10 @@ export default function ModelQuota() {
           <p className="text-xs text-gray-400 text-center mt-6">
             额度由企业管理员统一配置，如需调整请联系管理员
           </p>
-        </div>
+            </div>{/* end 中间内容区 */}
+            <div aria-hidden className="shrink-0 w-20 self-stretch" />
+          </div>{/* end max-w-[1920px] flex */}
+        </div>{/* end min-w-[1200px] overflow-x-clip */}
       </TooltipProvider>
     </TenantLayout>
   );

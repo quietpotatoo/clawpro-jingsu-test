@@ -178,38 +178,49 @@ export default function HelpDocs() {
   if (currentDoc) {
     return (
       <TenantLayout>
-        <div className="max-w-4xl mx-auto px-6 py-8 page-enter">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-gray-500 hover:text-gray-900 -ml-2 mb-6"
-            onClick={() => setSelectedDoc(null)}
-          >
-            <ArrowLeft className="w-4 h-4 mr-1" />
-            返回文档列表
-          </Button>
+        {/* SKILL §7.4 用户端通用骨架（以「我的 Agent」为基准）：
+              外层骨架保证两侧留白与「我的 Agent」一致；
+              内层再套一层 max-w-4xl 居中，保持文档正文的阅读宽度。 */}
+        <div className="min-w-[1200px] overflow-x-clip">
+          <div className="max-w-[1920px] mx-auto flex items-stretch page-enter">
+            <div aria-hidden className="shrink-0 w-20 self-stretch" />
+            <div className="flex-1 min-w-0 px-[42px] py-8">
+              <div className="max-w-4xl mx-auto">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-500 hover:text-gray-900 -ml-2 mb-6"
+                  onClick={() => setSelectedDoc(null)}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-1" />
+                  返回文档列表
+                </Button>
 
-          <SurfaceCard className="p-8">
-            <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-100">
-              <div className={`w-10 h-10 rounded-[4px] bg-gradient-to-br ${currentDoc.color} flex items-center justify-center`}>
-                <currentDoc.icon className="w-5 h-5 text-white" />
+                <SurfaceCard className="p-8">
+                  <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-100">
+                    <div className={`w-10 h-10 rounded-[4px] bg-gradient-to-br ${currentDoc.color} flex items-center justify-center`}>
+                      <currentDoc.icon className="w-5 h-5 text-white" />
+                    </div>
+                    <h1 className="text-xl font-bold text-gray-900">{currentDoc.title}</h1>
+                  </div>
+                  <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed">
+                    {currentDoc.content.split("\n").map((line, i) => {
+                      if (line.startsWith("# ")) return <h1 key={i} className="text-2xl font-bold text-gray-900 mb-4">{line.slice(2)}</h1>;
+                      if (line.startsWith("## ")) return <h2 key={i} className="text-lg font-semibold text-gray-900 mt-6 mb-3">{line.slice(3)}</h2>;
+                      if (line.startsWith("### ")) return <h3 key={i} className="text-base font-semibold text-gray-800 mt-4 mb-2">{line.slice(4)}</h3>;
+                      if (line.startsWith("- ")) return <li key={i} className="ml-4 text-gray-600 mb-1">{line.slice(2)}</li>;
+                      if (line.startsWith("> ")) return <blockquote key={i} className="border-l-4 border-blue-200 pl-4 text-gray-500 italic my-3">{line.slice(2)}</blockquote>;
+                      if (line.match(/^\d+\./)) return <p key={i} className="ml-4 text-gray-600 mb-1">{line}</p>;
+                      if (line.startsWith("**") && line.endsWith("**")) return <p key={i} className="font-semibold text-gray-800 mb-1">{line.slice(2, -2)}</p>;
+                      if (line === "") return <div key={i} className="h-2" />;
+                      return <p key={i} className="text-gray-600 mb-2">{line}</p>;
+                    })}
+                  </div>
+                </SurfaceCard>
               </div>
-              <h1 className="text-xl font-bold text-gray-900">{currentDoc.title}</h1>
             </div>
-            <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed">
-              {currentDoc.content.split("\n").map((line, i) => {
-                if (line.startsWith("# ")) return <h1 key={i} className="text-2xl font-bold text-gray-900 mb-4">{line.slice(2)}</h1>;
-                if (line.startsWith("## ")) return <h2 key={i} className="text-lg font-semibold text-gray-900 mt-6 mb-3">{line.slice(3)}</h2>;
-                if (line.startsWith("### ")) return <h3 key={i} className="text-base font-semibold text-gray-800 mt-4 mb-2">{line.slice(4)}</h3>;
-                if (line.startsWith("- ")) return <li key={i} className="ml-4 text-gray-600 mb-1">{line.slice(2)}</li>;
-                if (line.startsWith("> ")) return <blockquote key={i} className="border-l-4 border-blue-200 pl-4 text-gray-500 italic my-3">{line.slice(2)}</blockquote>;
-                if (line.match(/^\d+\./)) return <p key={i} className="ml-4 text-gray-600 mb-1">{line}</p>;
-                if (line.startsWith("**") && line.endsWith("**")) return <p key={i} className="font-semibold text-gray-800 mb-1">{line.slice(2, -2)}</p>;
-                if (line === "") return <div key={i} className="h-2" />;
-                return <p key={i} className="text-gray-600 mb-2">{line}</p>;
-              })}
-            </div>
-          </SurfaceCard>
+            <div aria-hidden className="shrink-0 w-20 self-stretch" />
+          </div>
         </div>
       </TenantLayout>
     );
@@ -217,11 +228,16 @@ export default function HelpDocs() {
 
   return (
     <TenantLayout>
-      <div className="max-w-4xl mx-auto px-6 py-8 page-enter">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">帮助文档</h1>
-          <p className="text-sm text-gray-500 mt-1">了解 Agent 的使用方法和最佳实践</p>
-        </div>
+      {/* SKILL §7.4 用户端通用骨架（以「我的 Agent」为基准） */}
+      <div className="min-w-[1200px] overflow-x-clip">
+        <div className="max-w-[1920px] mx-auto flex items-stretch page-enter">
+          <div aria-hidden className="shrink-0 w-20 self-stretch" />
+          <div className="flex-1 min-w-0 px-[42px] py-8">
+            <div className="max-w-4xl mx-auto">
+              <div className="mb-8">
+                <h1 className="text-2xl font-bold text-gray-900">帮助文档</h1>
+                <p className="text-sm text-gray-500 mt-1">了解 Agent 的使用方法和最佳实践</p>
+              </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {DOC_CATEGORIES.map((doc) => {
@@ -246,8 +262,12 @@ export default function HelpDocs() {
               </button>
             );
           })}
-        </div>
-      </div>
+              </div>
+            </div>{/* end max-w-4xl */}
+          </div>{/* end 中间内容区 */}
+          <div aria-hidden className="shrink-0 w-20 self-stretch" />
+        </div>{/* end max-w-[1920px] flex */}
+      </div>{/* end min-w-[1200px] overflow-x-clip */}
     </TenantLayout>
   );
 }

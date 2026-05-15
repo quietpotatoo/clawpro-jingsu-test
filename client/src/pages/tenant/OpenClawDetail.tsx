@@ -1289,7 +1289,14 @@ echo "✅ 导出完成，数据已上传到 COS"`;
           </div>
         </div>
       )}
-      <div className="max-w-7xl mx-auto px-6 py-8 page-enter">
+      {/* SKILL §7.4 用户端通用骨架（以「我的 Agent」为基准）：
+            min-w-[1200px] overflow-x-clip 兜底小屏 + max-w-[1920px] mx-auto flex 大屏限宽，
+            左右各 w-20（80px）占位带 + 中间 flex-1 min-w-0 px-[42px] py-8 内容区。
+            保证切换 Tab 时两侧留白节奏与「我的 Agent」一致。 */}
+      <div className="min-w-[1200px] overflow-x-clip">
+        <div className="max-w-[1920px] mx-auto flex items-stretch page-enter">
+          <div aria-hidden className="shrink-0 w-20 self-stretch" />
+          <div className="flex-1 min-w-0 px-[42px] py-8">
         {/* Back */}
         <div className="flex items-center gap-3 mb-6">
           <Link href="/my-openclaw">
@@ -2235,7 +2242,10 @@ echo "✅ 导出完成，数据已上传到 COS"`;
 
           </div>{/* end tab content */}
         </div>{/* end flex outer */}
-      </div>
+          </div>{/* end 中间内容区 (flex-1 min-w-0 px-[42px] py-8) */}
+          <div aria-hidden className="shrink-0 w-20 self-stretch" />
+        </div>{/* end max-w-[1920px] flex */}
+      </div>{/* end min-w-[1200px] overflow-x-clip */}
 
       {/* ===== 飞书授权弹窗（三阶段） ===== */}
       <Dialog open={showQrModal} onOpenChange={(open) => {

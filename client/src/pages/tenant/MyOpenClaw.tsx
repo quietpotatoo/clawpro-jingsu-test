@@ -506,17 +506,35 @@ export default function MyOpenClaw() {
           {/* Section Header - Figma 358:2373，左右 42px 段落内边距对齐 446:2976
               QuickStart 展开时，由 QuickStartGuide 自带的 mb-5 提供与 hero 之间的段间距；
               QuickStart 关闭时，QuickStartGuide 不渲染，需在此补 mt-5 让 hero 与 section 之间保持一致段间距 */}
-          <div className={`flex items-center justify-between mb-4 px-[42px] ${!showQuickStart ? "mt-5" : ""}`}>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-medium text-foreground">
-                我的 Agent
-                <span className="text-muted-foreground font-normal">（{claws.length}）</span>
-              </h2>
+          {/* 标题独占一行 */}
+          <div className={`px-[42px] ${!showQuickStart ? "mt-5" : ""}`}>
+            <h2 className="text-base font-medium text-foreground mb-3">
+              我的 Agent
+              <span className="text-muted-foreground font-normal">（{claws.length}）</span>
+            </h2>
+          </div>
+          {/* 操作栏：创建按钮 + 视图切换 + 分组模式 */}
+          <div className="flex items-center justify-between mb-4 px-[42px]">
+            <div className="flex items-center gap-3">
+              {/* 创建 Agent 按钮：Figma 黑→蓝渐变 */}
+              <Button
+                onClick={() => {
+                  if (groupMode === "multi-group") {
+                    setCreateStep(1);
+                    setSelectedGroup(getDefaultGroup(MOCK_USER_GROUPS));
+                  }
+                  setShowCreate(true);
+                }}
+                variant="claw-primary"
+                className="px-5"
+              >
+                <Plus className="w-4 h-4 mr-1.5" />
+                创建 Agent
+              </Button>
             </div>
             <div className="flex items-center gap-3">
               {/* 视图切换：管理视图 / 对话视图 */}
               <ViewModeSegmented value={viewMode} onChange={handleViewModeChange} />
-
               {/* 双模式 Segmented：保留 OneID / 普通模式逻辑
                   字号/内边距/图标尺寸与左侧 ViewModeSegmented 保持一致 */}
               <div
@@ -563,22 +581,6 @@ export default function MyOpenClaw() {
                   多分组
                 </button>
               </div>
-
-              {/* 创建 Agent 按钮：Figma 黑→蓝渐变 */}
-              <Button
-                onClick={() => {
-                  if (groupMode === "multi-group") {
-                    setCreateStep(1);
-                    setSelectedGroup(getDefaultGroup(MOCK_USER_GROUPS));
-                  }
-                  setShowCreate(true);
-                }}
-                variant="claw-primary"
-                className="px-5"
-              >
-                <Plus className="w-4 h-4 mr-1.5" />
-                创建 Agent
-              </Button>
             </div>
           </div>
 

@@ -169,8 +169,11 @@ export default function LandingPage() {
 
   return (
     <div className="landing-root" ref={rootRef}>
+      {/* Navbar 提到 page-wrapper 之外，使其不参与 1920 基准 zoom 缩放，
+          始终保持 64px 高度，与用户端 TenantLayout 的 h-16 顶部导航完全一致，
+          避免 1200px 窗口下 navbar 被 zoom 压到 ~40px 与用户端落差明显 */}
+      <Navbar />
       <div className="page-wrapper">
-        <Navbar />
         <Hero />
 
         <div
