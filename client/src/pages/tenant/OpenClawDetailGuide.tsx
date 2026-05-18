@@ -39,10 +39,15 @@ import {
   X,
   ArrowLeft,
   Send,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AgentAvatar } from "@/components/agent/AgentAvatar";
 import { MODEL_PROVIDERS, CHANNEL_OPTIONS } from "@/lib/agentConfigConstants";
+import ToolsMcpPanel from "./ToolsMcpPanel";
+import FileSpace from "./FileSpace";
+import MemoryPreview from "@/components/MemoryPreview";
 
 // ─── 顶部 Tab 数据（横向 Segmented Control） ─────────────────────────────
 type DetailTab = "basic" | "tools" | "memory" | "files" | "doctor";
@@ -464,6 +469,42 @@ export default function OpenClawDetailGuide() {
   const [skillSearch] = useState("");
   const [skillModalOpen, setSkillModalOpen] = useState(false);
   const [panelDialogOpen, setPanelDialogOpen] = useState(false);
+
+  // ── Memory Tab state（mock）──
+  const [memoryStatus, setMemoryStatus] = useState<"pro" | "free" | "none" | "upgrading">("pro");
+  const [proQuotaAvailable] = useState(true);
+  const [memoryLoading, setMemoryLoading] = useState(false);
+  const [memoryDataLoaded, setMemoryDataLoaded] = useState(false);
+  useEffect(() => {
+    if (activeTab === "memory" && !memoryDataLoaded && (memoryStatus === "free" || memoryStatus === "pro")) {
+      setMemoryLoading(true);
+      const loadTime = memoryStatus === "free" ? 4000 : 1500;
+      const timer = setTimeout(() => {
+        setMemoryLoading(false);
+        setMemoryDataLoaded(true);
+      }, loadTime);
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab, memoryDataLoaded, memoryStatus]);
+
+  // ── Doctor Tab state（一键修复 mock）──
+  const [quickFixState, setQuickFixState] = useState<"idle" | "loading" | "success" | "failed">("idle");
+  const [quickFixFailReason, setQuickFixFailReason] = useState("");
+  const quickFixFailReasonsRef = useRef([
+    "API KEY 校验未通过",
+    "插件依赖加载超时",
+    "通道配置文件解析异常",
+  ]);
+  const quickFixFailIdxRef = useRef(0);
+  const runQuickFixMock = useCallback(() => {
+    setQuickFixState("loading");
+    setQuickFixFailReason("");
+    setTimeout(() => {
+      // 引导页演示版：默认走成功路径；如需演示失败可改为按计数轮换
+      setQuickFixState("success");
+      toast.success("一键修复执行完成");
+    }, 3000);
+  }, []);
 
   // ── Model state ──
   const [selectedProvider, setSelectedProvider] = useState(MODEL_PROVIDERS[0].value);
@@ -1137,14 +1178,108 @@ export default function OpenClawDetailGuide() {
                 </div>
               )}
 
-              {/* 其他 tab 占位 */}
-              {activeTab !== "basic" && (
-                <SurfaceCard className="p-12">
-                  <div className="text-center text-sm" style={{ color: "#A3A3A3" }}>
-                    {DETAIL_TABS.find((t) => t.id === activeTab)?.label}
-                    内容待开发
-                  </div>
+              {/* 工具管理 tab */}
+              {activeTab === "tools" && (
+                <ToolsMcpPanel />
+              )}
+
+              {/* 记忆管理 tab */}
+              {activeTab === "memory" && (
+                <SurfaceCard className="p-6">
+                  <MemoryPreview
+                    memoryStatus={memoryStatus}
+                    proQuotaAvailable={proQuotaAvailable}
+                    showConfidence={false}
+                    isLoading={memoryLoading}
+                    onStatusChange={async (newStatus) => {
+                      await new Promise((resolve) => setTimeout(resolve, 1000));
+                      setMemoryStatus(newStatus);
+                    }}
+                  />
                 </SurfaceCard>
+              )}
+
+              {/* 网盘管理 tab */}
+              {activeTab === "files" && (
+                <FileSpace
+                  clawName="OpenClaw 引导预览"
+                  clawId="guide-preview"
+                  basePath="https://smh3jsttekkpsoqw.api.tencentsmh.cn"
+                  libraryId="smh3jsttekkpsoqw"
+                  spaceId="space232t1yug3w7up"
+                  getAccessToken={async () => ({
+                    accessToken:
+                      "acctk021cf0f24emnem68z3dzwr734zcdpl74fd7783cgdesppskermqhhu7d9pnns4exa5gvc84n2yfhdq5unt754belzzvkwcd5psjuznzwt7jbcs2zsm5c3828ba4",
+                    expiresAt: Date.now() + 3600 * 24 * 1000,
+                  })}
+                />
+              )}
+
+              {/* 龙虾医院 tab（仅含「一键修复」卡片，引导页不嵌入龙虾医生对话） */}
+              {activeTab === "doctor" && (
+                <div className="flex flex-col gap-5">
+                  <SurfaceCard className="p-6">
+                    <h2 className="text-base font-semibold mb-2" style={{ color: "#0A0A0A" }}>一键修复</h2>
+                    <p className="text-sm mb-4" style={{ color: "#737373" }}>
+                      适合龙虾配置文件中 API KEY、插件、通道等配置异常导致无法启动等常见问题，系统自动检测并尝试修复。
+                    </p>
+                    <ul className="space-y-2 mb-6">
+                      <li className="flex items-center gap-2 text-sm" style={{ color: "#334155" }}>
+                        <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: "#A3A3A3" }} />
+                        自动执行
+                        <code className="px-2 py-0.5 rounded-[2px] font-mono text-xs" style={{ backgroundColor: "#F5F5F5", color: "#334155" }}>agent doctor --fix</code>
+                      </li>
+                      <li className="flex items-center gap-2 text-sm" style={{ color: "#334155" }}>
+                        <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: "#A3A3A3" }} />
+                        自动恢复常见配置问题
+                      </li>
+                      <li className="flex items-center gap-2 text-sm" style={{ color: "#334155" }}>
+                        <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: "#A3A3A3" }} />
+                        恢复前会将配置文件备份
+                      </li>
+                    </ul>
+                    <div className="pt-4" style={{ borderTop: "1px solid #E5E5E5" }}>
+                      {quickFixState === "idle" && (
+                        <Button variant="claw-primary" size="claw-sm" onClick={runQuickFixMock}>
+                          一键修复
+                        </Button>
+                      )}
+                      {quickFixState === "loading" && (
+                        <div className="inline-flex items-center gap-2 px-3 h-8 rounded-[4px] text-xs" style={{ backgroundColor: "#F5F5F5", color: "#737373" }}>
+                          <span className="w-3 h-3 border-2 rounded-full animate-spin" style={{ borderColor: "#E5E5E5", borderTopColor: "#737373" }} />
+                          正在执行修复
+                        </div>
+                      )}
+                      {quickFixState === "success" && (
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <span className="badge-running inline-flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" />
+                            修复成功
+                          </span>
+                          <span className="text-xs" style={{ color: "#737373" }}>Gateway 已正常启动，请前往 Agent 对话确认问题是否已解决</span>
+                        </div>
+                      )}
+                      {quickFixState === "failed" && (
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <span className="badge-stopped inline-flex items-center gap-1.5">
+                            <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                            修复失败
+                          </span>
+                          <span className="text-xs" style={{ color: "#737373" }}>{quickFixFailReason}，建议开启龙虾医生进行深度诊断</span>
+                        </div>
+                      )}
+                    </div>
+                  </SurfaceCard>
+
+                  {/* 引导页提示：龙虾医生对话需进入实例详情 */}
+                  <SurfaceCard className="p-6">
+                    <h2 className="text-base font-semibold mb-2" style={{ color: "#0A0A0A" }}>龙虾医生</h2>
+                    <p className="text-sm" style={{ color: "#737373" }}>
+                      支持自然语言对话式排障，需在管控端开启「允许用户使用龙虾医生」后，
+                      进入实例详情页查看完整对话能力。
+                    </p>
+                  </SurfaceCard>
+                </div>
               )}
               </div>
 

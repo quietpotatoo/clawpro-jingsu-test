@@ -31,6 +31,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Textarea } from "@/components/ui/textarea";
+import { SurfaceCard } from "@/components/ui/Surface";
 import {
   Search,
   Plus,
@@ -593,12 +594,9 @@ export default function ToolsMcpPanel() {
   return (
     <div className="grid grid-cols-3 gap-5" style={{ minHeight: 0, alignItems: "start" }}>
       {/* ===== 第一列：MCP 配置 ===== */}
-      <div
-        className="bg-white rounded-2xl border border-gray-100 overflow-hidden flex flex-col"
-        style={{
-          boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04)",
-          height: "749px",
-        }}
+      <SurfaceCard
+        className="overflow-hidden flex flex-col"
+        style={{ height: "749px" }}
       >
         {/* Header */}
         <div className="p-5 border-b border-gray-50">
@@ -841,7 +839,7 @@ export default function ToolsMcpPanel() {
             </div>
           )}
         </div>
-      </div>
+      </SurfaceCard>
 
       {/* ===== 第二列：留空 ===== */}
       <div />
