@@ -440,9 +440,9 @@ export default function MyOpenClaw() {
                 点阵不再贯穿全高（避免与 hero 段、分页栏段对应的两侧四角重叠），
                 由中间内容区的「中段 wrapper」局部延伸 80px 渲染，仅覆盖 hero 底线 ~ 分页栏顶线 */}
             <div aria-hidden className="shrink-0 w-20 self-stretch" />
-            {/* 中间内容区 - Figma 446:2944，gap 32px 由各段 mb 控制 / padding-bottom 128px / 子段自带 px-42
+            {/* 中间内容区 - Figma 446:2944，gap 32px 由各段 mb 控制 / padding-bottom 75px / 子段自带 px-42
                 ref={middleRef}：让点阵装饰层基于中间内容区与分页栏的实际几何动态计算 bottom 值 */}
-            <div ref={middleRef} className="flex-1 min-w-0 relative pb-32">
+            <div ref={middleRef} className="flex-1 min-w-0 relative" style={{ paddingBottom: "75px" }}>
               {/* 左右两侧点阵装饰层 - 仅覆盖 hero 底线 ~ 分页栏顶线（四角无点阵）
                   - 高度自适应：top: 112px = HeroBanner 高度；bottom: dotsBottom（动态 = 中间内容区高度 - 分页栏 offsetTop）
                     完全摆脱对 pb-32 / mt-6 等常量的依赖，直接读取 DOM 几何
@@ -513,30 +513,15 @@ export default function MyOpenClaw() {
               <span className="text-muted-foreground font-normal">（{claws.length}）</span>
             </h2>
           </div>
-          {/* 操作栏：创建按钮 + 视图切换 + 分组模式 */}
+          {/* 操作栏：视图切换（左） + 分组模式 + 创建按钮（右） */}
           <div className="flex items-center justify-between mb-4 px-[42px]">
-            <div className="flex items-center gap-3">
-              {/* 创建 Agent 按钮：Figma 黑→蓝渐变 */}
-              <Button
-                onClick={() => {
-                  if (groupMode === "multi-group") {
-                    setCreateStep(1);
-                    setSelectedGroup(getDefaultGroup(MOCK_USER_GROUPS));
-                  }
-                  setShowCreate(true);
-                }}
-                variant="claw-primary"
-                className="px-5"
-              >
-                <Plus className="w-4 h-4 mr-1.5" />
-                创建 Agent
-              </Button>
-            </div>
             <div className="flex items-center gap-3">
               {/* 视图切换：管理视图 / 对话视图 */}
               <ViewModeSegmented value={viewMode} onChange={handleViewModeChange} />
+            </div>
+            <div className="flex items-center gap-3">
               {/* 双模式 Segmented：保留 OneID / 普通模式逻辑
-                  字号/内边距/图标尺寸与左侧 ViewModeSegmented 保持一致 */}
+                  字号/内边距/图标尺寸与 ViewModeSegmented 保持一致 */}
               <div
                 className="hidden md:inline-flex items-center gap-1 rounded-[4px] p-1"
                 style={{ background: "#F5F5F5" }}
@@ -577,10 +562,24 @@ export default function MyOpenClaw() {
                   }
                   title="切换到多分组用户模式"
                 >
-                  <Users className="w-4 h-4" />
                   多分组
                 </button>
               </div>
+              {/* 创建 Agent 按钮：Figma 黑→蓝渐变 */}
+              <Button
+                onClick={() => {
+                  if (groupMode === "multi-group") {
+                    setCreateStep(1);
+                    setSelectedGroup(getDefaultGroup(MOCK_USER_GROUPS));
+                  }
+                  setShowCreate(true);
+                }}
+                variant="claw-primary"
+                className="px-5"
+              >
+                <Plus className="w-4 h-4 mr-1.5" />
+                创建 Agent
+              </Button>
             </div>
           </div>
 
@@ -658,6 +657,7 @@ export default function MyOpenClaw() {
                               setRemoveRoleConfirm({ id: c.id, name: c.name, roleName: c.roleName! })
                             }
                             onRetry={(id, name) => handleRetry(id, name)}
+                            onChat={() => setViewMode("chat")}
                             canOpenTerminal={(c) => {
                               const clawGroup =
                                 MOCK_USER_GROUPS.find((g) => g.id === (c.groupId || "grp-fe")) ||

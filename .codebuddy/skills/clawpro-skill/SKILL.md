@@ -480,6 +480,236 @@ import { SurfaceCard, SurfaceInner, SurfaceConfig } from "@/components/ui/Surfac
 
 ---
 
+### 7.5 点阵装饰背景规则（**用户端通用骨架**，与 §7.4 配合使用）
+
+> ⚠️ **作用域**：本节是 §7.4 三档骨架的**视觉填充层**，规定了用户端业务页两侧 80px 占位带 + 中间内容区上下边界附近的"点阵 + 贯穿横线 + 贯穿竖线"装饰系统。**所有用户端业务页（包括「我的 Agent」、OpenClaw 详情、技能广场、模型额度等）必须严格沿用，确保切换 Tab/页时背景节奏完全一致。**
+> **设计意图**：让两侧 80px 占位带不是"裸露的灰背景"，而是用极轻量的点阵图案承接视觉，并通过左右贯穿竖线 + 上下贯穿横线把内容区"框住"，形成稳定的设计语言（参考 Figma 446:2942 / 358:2322）。
+
+#### 7.5.1 视觉规格（不可改）
+
+| 元素 | 值 |
+|------|-----|
+| **点阵网格** | `12px × 12px` |
+| **点阵圆点** | 半径 1px，颜色 `#DFE2E5`（`backgroundImage: radial-gradient(circle, #DFE2E5 1px, transparent 1.1px); backgroundSize: 12px 12px`） |
+| **左右贯穿竖线** | 1px / `#E2E8F0` / `top-0 bottom-0` 全高贯穿 / `z-30`（覆盖业务渐变背景） |
+| **上下贯穿横线** | 1px / `#E2E8F0` / `width: 100vw` + `left: calc(50% - 50vw)` 横跨全视口 |
+| **底部留白带高度** | **75px**（中间内容区 `paddingBottom: 75px`，与 §3.1 间距对齐） |
+
+#### 7.5.2 布局拓扑（关键）
+
+```
+┌─ 视口 100vw ──────────────────────────────────────────────────┐
+│   ┌─ middle content（flex-1） ────────────────────────────┐    │
+│   │ Header 段（页面标题/返回/操作按钮）                     │    │
+│   ├═══[ Header 底部贯穿横线（width:100vw）]══════════════════│
+│ ··│              tab / 卡片内容                          │·· │
+│ ··│              （中间业务内容区）                        │·· │
+│ ··│                                                       │·· │
+│ ··│                                                       │·· │
+│   ├═══[ 底部分隔栏顶部贯穿横线（width:100vw）]═══════════════│
+│   │ ↕ 75px paddingBottom（深灰背景"裸露带"，无点阵）       │    │
+│   └─────────────────────────────────────────────────────────┘
+│ ↑ 左侧 80px 占位带（点阵）        ↑ 右侧 80px 占位带（点阵）
+└────────────────────────────────────────────────────────────┘
+```
+
+**关键要点**：
+1. **点阵只覆盖"两侧 80px 占位带 + Header 底部横线 ~ 底部分隔栏顶部横线"区间**，不进入中间内容区，也不延伸到底部 75px 留白带。
+2. **左右贯穿竖线 `top-0 bottom-0` 全高贯穿**（包括底部 75px 留白带），把整个中间内容区"框住"。
+3. **底部 75px 留白带没有点阵**——是"裸露"的页面背景灰色带（来自 TenantLayout 的 `linear-gradient 180deg #FFFFFF→#F5F5F5`）。
+4. **点阵 `top` 与 `bottom` 必须用 ResizeObserver 动态测量**（不能写死像素值），因为 Header 高度会随 ConfigBanner、QuickStartGuide 等模块展开/收起而变化。
+
+#### 7.5.3 标准实现（所有需要点阵背景的用户端业务页统一沿用）
+
+```tsx
+import { useState, useRef, useCallback, useEffect } from "react";
+import TenantLayout from "@/components/TenantLayout";
+
+export default function MyTenantPage() {
+  // ═════ 点阵高度动态计算 ═════
+  const roRef = useRef<ResizeObserver | null>(null);
+  const middleSectionRef = useRef<HTMLDivElement | null>(null);
+  const headerElRef = useRef<HTMLElement | null>(null);
+  const bottomBarElRef = useRef<HTMLDivElement | null>(null);
+  const [dotsTop, setDotsTop] = useState(112);    // header 底部 ≈ 112
+  const [dotsBottom, setDotsBottom] = useState(75); // 底部分隔栏顶部 ≈ 75
+
+  const recompute = useCallback(() => {
+    const middle = middleSectionRef.current;
+    const header = headerElRef.current;
+    const bottomBar = bottomBarElRef.current;
+    if (!middle) return;
+    if (header) {
+      const middleRect = middle.getBoundingClientRect();
+      const headerRect = header.getBoundingClientRect();
+      setDotsTop(headerRect.bottom - middleRect.top);
+    }
+    if (bottomBar) {
+      const middleRect = middle.getBoundingClientRect();
+      const barRect = bottomBar.getBoundingClientRect();
+      const barTopInMiddle = barRect.top - middleRect.top;
+      setDotsBottom(middle.offsetHeight - barTopInMiddle);
+    }
+  }, []);
+
+  // 中间内容区 ref
+  const middleRef = useCallback((node: HTMLDivElement | null) => {
+    middleSectionRef.current = node;
+    recompute();
+  }, [recompute]);
+
+  // Header ref（同时初始化 ResizeObserver，监听 header / middle / bottomBar 三者尺寸变化）
+  const headerRef = useCallback((node: HTMLElement | null) => {
+    if (roRef.current) { roRef.current.disconnect(); roRef.current = null; }
+    headerElRef.current = node;
+    if (!node) { recompute(); return; }
+    recompute();
+    const ro = new ResizeObserver(recompute);
+    ro.observe(node);
+    if (middleSectionRef.current) ro.observe(middleSectionRef.current);
+    if (bottomBarElRef.current) ro.observe(bottomBarElRef.current);
+    roRef.current = ro;
+  }, [recompute]);
+
+  // 底部分隔栏 ref
+  const bottomBarRef = useCallback((node: HTMLDivElement | null) => {
+    bottomBarElRef.current = node;
+    recompute();
+    if (node && roRef.current) roRef.current.observe(node);
+  }, [recompute]);
+
+  // 监听窗口尺寸变化
+  useEffect(() => {
+    window.addEventListener("resize", recompute);
+    return () => window.removeEventListener("resize", recompute);
+  }, [recompute]);
+
+  return (
+    <TenantLayout>
+      {/* §7.4 三档骨架：min-w / max-w / 80px 占位带 */}
+      {/* min-h-[calc(100vh-64px)]：保证内容少时也能撑满视口，避免底部出现"裸露背景"区 */}
+      <div className="min-w-[1200px] overflow-x-clip">
+        <div className="max-w-[1920px] mx-auto flex items-stretch page-enter min-h-[calc(100vh-64px)]">
+          {/* 左侧 80px 占位带 */}
+          <div aria-hidden className="shrink-0 w-20 self-stretch" />
+
+          {/* 中间内容区：paddingBottom 75px 留出底部空白 */}
+          <div ref={middleRef} className="flex-1 min-w-0 relative" style={{ paddingBottom: "75px" }}>
+            {/* ───── 左侧点阵装饰层（向左外延出占位带） ───── */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute"
+              style={{
+                top: `${dotsTop}px`,
+                bottom: `${dotsBottom}px`,
+                left: "calc((100% - 100vw) / 2)", // 父级 100% = 中间区宽度 W；此值为负，向左延伸到视口左边
+                right: "100%",                     // 紧贴中间内容区左边外侧
+                backgroundImage: "radial-gradient(circle, #DFE2E5 1px, transparent 1.1px)",
+                backgroundSize: "12px 12px",
+              }}
+            />
+            {/* ───── 右侧点阵装饰层（向右外延出占位带） ───── */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute"
+              style={{
+                top: `${dotsTop}px`,
+                bottom: `${dotsBottom}px`,
+                left: "100%",
+                right: "calc((100% - 100vw) / 2)",
+                backgroundImage: "radial-gradient(circle, #DFE2E5 1px, transparent 1.1px)",
+                backgroundSize: "12px 12px",
+              }}
+            />
+            {/* ───── 左右贯穿竖线（全高贯穿到底，包括 75px 留白带） ───── */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-0 bottom-0 left-0 z-30"
+              style={{ width: "1px", backgroundColor: "#E2E8F0" }}
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute top-0 bottom-0 right-0 z-30"
+              style={{ width: "1px", backgroundColor: "#E2E8F0" }}
+            />
+
+            {/* ═════ 业务内容主体 ═════ */}
+            <div className="relative">
+              {/* Header 段：自带底部贯穿横线，作为点阵的上边界 */}
+              <header ref={headerRef} className="relative px-[42px] py-6">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute"
+                  style={{
+                    left: "calc(50% - 50vw)",
+                    width: "100vw",
+                    bottom: 0,
+                    height: "1px",
+                    backgroundColor: "#E2E8F0",
+                  }}
+                />
+                {/* … header 业务内容 … */}
+              </header>
+
+              {/* 业务内容区 */}
+              <div className="px-[42px] py-8">
+                {/* … tab / 卡片网格 / 列表 等业务内容 … */}
+              </div>
+
+              {/* 底部分隔栏：自带顶部贯穿横线，作为点阵的下边界；下方由父容器 paddingBottom:75px 留出空白 */}
+              <div ref={bottomBarRef} className="relative mt-6 px-6 py-3 h-9">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute"
+                  style={{
+                    left: "calc(50% - 50vw)",
+                    width: "100vw",
+                    top: 0,
+                    height: "1px",
+                    backgroundColor: "#E2E8F0",
+                  }}
+                />
+                {/* 如有分页/统计信息可放此（参考 MyOpenClaw 分页栏） */}
+              </div>
+            </div>
+          </div>
+
+          {/* 右侧 80px 占位带 */}
+          <div aria-hidden className="shrink-0 w-20 self-stretch" />
+        </div>
+      </div>
+    </TenantLayout>
+  );
+}
+```
+
+#### 7.5.4 容易出错的写法（❌ 禁止）
+
+| ❌ 错误写法 | 问题 | ✅ 正确写法 |
+|---|---|---|
+| 点阵用 `top: 112` / `bottom: 180` 写死像素值 | Header 折叠/展开时点阵不跟随，出现错位 | 用 ResizeObserver + getBoundingClientRect 动态算 |
+| 点阵 `bottom: 0`（不设底部分隔栏） | 点阵延伸到 75px 留白带内，破坏底部"深灰留白带"视觉 | 加底部分隔栏，用 bottomBarRef 动态算 `dotsBottom` |
+| 底部装饰横线用 `fixed bottom: 75px` | 横线脱离内容流，内容少时位置错乱、与竖线/点阵不对齐 | 用 `absolute` 作为底部分隔栏自身的顶部贯穿横线 |
+| 中间内容区用 `pb-32`（128px） | 与 §3.1 间距 token 不一致，底部留白偏厚 | 统一用 `paddingBottom: 75px` |
+| 缺 `min-h-[calc(100vh-64px)]` | 内容少时整体不撑满视口，底部 80px 占位带露出"无点阵无竖线"的裸露灰带 | 在最外层 `flex` 容器加 `min-h-[calc(100vh-64px)]`（64px 是 TopNav 高度） |
+| 点阵层缺 `pointer-events-none` | 拦截下方按钮/链接的点击 | 必加 `pointer-events-none` |
+| 贯穿竖线缺 `z-30` | 被业务渐变背景（如 QuickStartGuide）覆盖看不见 | 加 `z-30` 提层 |
+| 点阵 `right: "calc((100% - 100vw) / 2)"` 用错正负号 | 点阵不向外延伸或溢出错位 | 严格遵循"左侧用 `left: calc((100% - 100vw) / 2); right: 100%`、右侧用 `left: 100%; right: calc((100% - 100vw) / 2)`" |
+
+#### 7.5.5 适用范围
+
+- ✅ **所有需要"两侧 80px 占位带 + 点阵 + 贯穿线"视觉的用户端业务页**：「我的 Agent」（`MyOpenClaw.tsx`，参考实现）、OpenClaw 详情（`OpenClawDetailGuide.tsx`）、技能广场、模型额度等。
+- ⚠️ **窄表单页 / 登录页 / 帮助文档纯文章页**：可不套用本节装饰，仅保留 §7.4 的占位带骨架即可。
+- ❌ **管控端（Admin）禁用**：管控端不使用 80px 占位带骨架，自然也无点阵装饰。
+
+#### 7.5.6 参考实现源码
+
+> 任何对接此规则的新页面，请直接参考以下两个文件的源码（已是规范实现）：
+> - `client/src/pages/tenant/MyOpenClaw.tsx`：完整版（带 HeroBanner + QuickStartGuide + 分页栏作为底部分隔栏）
+> - `client/src/pages/tenant/OpenClawDetailGuide.tsx`：精简版（无 HeroBanner，纯 Header + Tab + 三栏卡片 + 独立底部分隔栏）
+
+---
+
 **管理端响应式**：暂不做响应式适配，沿用固定布局（主内容区 1496px + 侧栏 232px）。**不要把用户端的 `min-w-[1200px]` / `max-w-[1920px]` / 1200–1920 自适应规则套到管控端任何页面上**。
 
 ---

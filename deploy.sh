@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
 
+# ============================================================
+# 服务器首次初始化脚本（在目标服务器上执行一次即可）
+# 作用：安装 Node.js 20 + PM2、准备 /opt/openclaw-enterprise 目录、首次拉起服务
+#
+# 日常部署请使用 skill：openclaw-deploy.skill 中的 scripts/deploy.sh
+# 部署目标已迁移到 DevCloud：clawprodesign.devcloud.woa.com:36000
+# ============================================================
+
 echo "=== [1/5] 安装 Node.js 20.x ==="
 # 清理旧版本
 rm -rf /usr/local/lib/nodejs
@@ -48,4 +56,4 @@ pm2 status
 curl -sI http://localhost:80 | head -5
 
 echo ""
-echo "✅ 部署完成！访问地址: http://129.204.158.198"
+echo "✅ 初始化完成！日常部署请使用 openclaw-deploy.skill 中的 scripts/deploy.sh"

@@ -114,7 +114,13 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
   // 给中央 Tab 设置基于"路由前缀"的匹配
   const centerItemsWithMatcher = visibleCenterNavItems.map((item) => ({
     ...item,
-    matches: (current: string) => current.startsWith(item.value),
+    matches: (current: string) => {
+      if (item.value === "/my-openclaw") {
+        // 详情页路由 /openclaw/:id 和 /openclaw-guide 也属于"我的 Agent"
+        return current.startsWith("/my-openclaw") || current.startsWith("/openclaw");
+      }
+      return current.startsWith(item.value);
+    },
   }));
 
   // 通知数据（管理员多推一条独立化消息）
@@ -240,7 +246,7 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
       />
 
       {/* Main Content：上偏移 = 顶部导航 64px */}
-      <main className="pt-16 min-h-screen">{children}</main>
+      <main className="pt-[64px] min-h-screen">{children}</main>
     </div>
   );
 }

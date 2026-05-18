@@ -16,6 +16,7 @@ import PreviewIndex from "./pages/PreviewIndex";
 // Tenant
 import MyAgent from "./pages/tenant/MyOpenClaw";
 import AgentDetail from "./pages/tenant/OpenClawDetail";
+import OpenClawDetailGuide from "./pages/tenant/OpenClawDetailGuide";
 import ModelQuota from "./pages/tenant/ModelQuota";
 import HelpDocs from "./pages/tenant/HelpDocs";
 import SkillSquare from "./pages/tenant/SkillSquare";
@@ -63,7 +64,9 @@ function Router() {
 
       {/* Tenant Routes */}
       <Route path="/my-openclaw" component={MyAgent} />
-      <Route path="/openclaw/:id" component={AgentDetail} />
+      <Route path="/openclaw/:id" component={OpenClawDetailGuide} />
+      <Route path="/openclaw-guide" component={OpenClawDetailGuide} />
+      <Route path="/openclaw-guide/:id" component={OpenClawDetailGuide} />
       <Route path="/model-quota" component={ModelQuota} />
       <Route path="/skill-square" component={SkillSquare} />
       <Route path="/help-docs" component={HelpDocs} />

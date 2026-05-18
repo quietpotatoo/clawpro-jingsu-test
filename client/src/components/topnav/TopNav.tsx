@@ -63,13 +63,13 @@ export default function TopNav({
 }: TopNavProps) {
   return (
     <header
-      className={`fixed left-0 right-0 z-50 h-16 bg-white/95 backdrop-blur-md ${className}`}
+      className={`fixed left-0 right-0 z-50 h-[64px] bg-white/95 backdrop-blur-md ${className}`}
       style={{
         top: 0,
         borderBottom: "1px solid #E2E8F0",
       }}
     >
-      <div className="h-full flex items-center justify-between px-7 relative">
+      <div className="h-full flex items-center justify-between px-10 relative">
         {/* 左：Logo —— 与 Landing 页 navbar-brand 完全一致：
             28×28 图标 + 22.12px Be Vietnam Pro 600 文字 + gap 8px。
             资源直接复用 landing 的 /landing-assets/60.svg，避免重复资产。 */}

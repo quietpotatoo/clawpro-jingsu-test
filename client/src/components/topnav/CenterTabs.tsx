@@ -62,7 +62,7 @@ export default function CenterTabs<V extends string = string>({
             aria-selected={active}
             onClick={() => onChange?.(item.value, idx)}
             className={[
-              "px-3 py-[7px] rounded-[3px] text-sm transition-all duration-150",
+              "px-3 py-[7px] rounded-[3px] text-[14px] leading-[22px] transition-all duration-150",
               active
                 ? "bg-white text-[#020617] font-medium"
                 : "text-[#334155] hover:text-[#020617] font-normal",
