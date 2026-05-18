@@ -902,10 +902,7 @@ export default function ApiDocs() {
           <div className="h-4 w-px bg-gray-200" />
           <div className="flex items-center gap-2">
             <div
-              className="w-6 h-6 rounded-[4px] flex items-center justify-center"
-              style={{
-                background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)",
-              }}
+              className="w-6 h-6 rounded-[4px] flex items-center justify-center bg-[linear-gradient(90deg,#020617_70%,#1447E6_110%)]"
             >
               <Book className="w-3.5 h-3.5 text-white" />
             </div>

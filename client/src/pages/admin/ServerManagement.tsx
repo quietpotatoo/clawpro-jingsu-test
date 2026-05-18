@@ -113,7 +113,7 @@ export default function ServerManagement() {
               <div className="flex items-center justify-between px-6 py-5 border-b border-gray-50">
                 <h2 className="font-semibold text-gray-900">镜像列表</h2>
                 <Button size="sm" onClick={() => setShowImportDialog(true)}
-                  style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>
+                 >
                   <Download className="w-3.5 h-3.5 mr-1.5" />
                   导入镜像
                 </Button>
@@ -301,7 +301,7 @@ export default function ServerManagement() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowImportDialog(false)}>取消</Button>
             <Button onClick={() => { setShowImportDialog(false); toast.success("镜像导入任务已提交"); }}
-              style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>
+             >
               确认导入
             </Button>
           </DialogFooter>
@@ -368,7 +368,7 @@ export default function ServerManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAddRuleDialog(false)}>取消</Button>
-            <Button onClick={handleSaveRule} style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>
+            <Button onClick={handleSaveRule}>
               {editRule ? "保存" : "确认添加"}
             </Button>
           </DialogFooter>

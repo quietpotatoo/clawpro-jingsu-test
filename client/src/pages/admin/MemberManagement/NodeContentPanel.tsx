@@ -806,14 +806,6 @@ export default function NodeContentPanel({
                               ? "text-white"
                               : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                           }`}
-                          style={
-                            isActive
-                              ? {
-                                  background:
-                                    "linear-gradient(90deg, #020617 70%, #1447E6 100%)",
-                                }
-                              : undefined
-                          }
                         >
                           {p}
                         </button>
@@ -1023,10 +1015,6 @@ export default function NodeContentPanel({
             <Button
               onClick={handleAddConfirm}
               disabled={addSelected.length === 0}
-              className="text-white"
-              style={{
-                background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)",
-              }}
             >
               确认添加
             </Button>
@@ -1072,7 +1060,7 @@ export default function NodeContentPanel({
               取消
             </Button>
             <Button
-              className="bg-red-500 hover:bg-red-600 text-white"
+              variant="destructive"
               onClick={handleRemoveConfirm}
             >
               确认移除
@@ -1136,8 +1124,6 @@ export default function NodeContentPanel({
           <DialogFooter>
             <Button variant="outline" onClick={() => setAgentInstanceDialog(null)}>取消</Button>
             <Button
-              style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
-              className="text-white"
               onClick={() => {
                 if (agentInstanceDialog) {
                   onRemoveFromGroup?.(agentInstanceDialog.userId);
@@ -1203,8 +1189,6 @@ export default function NodeContentPanel({
                 setEditGroupIds([]);
               }}
               disabled={editGroupIds.length === 0}
-              className="text-white"
-              style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
             >
               确认修改
             </Button>

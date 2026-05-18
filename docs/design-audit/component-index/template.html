@@ -104,6 +104,21 @@
   .footer-note { color:var(--text-3); font-size:12px; text-align:center; margin: 24px 0 8px; }
   a { color:var(--primary); text-decoration:none; }
   a:hover { text-decoration:underline; }
+
+  /* preview modal */
+  .preview-btn { padding:3px 10px; border-radius:6px; border:1px solid var(--border-strong); background:#fff; color:var(--primary); font-size:12px; font-weight:500; cursor:pointer; }
+  .preview-btn:hover { background:var(--primary-soft); border-color:var(--primary); }
+  .toggle-btn { padding:3px 10px; border-radius:6px; border:none; background:#f3f4f6; color:var(--text-2); font-size:12px; font-weight:500; cursor:pointer; }
+  .toggle-btn:hover { background:#e5e7eb; color:var(--text); }
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:9999; display:none; align-items:center; justify-content:center; }
+  .modal-overlay.open { display:flex; }
+  .modal-box { background:#fff; border-radius:12px; width:720px; max-width:90vw; height:80vh; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.2); overflow:hidden; }
+  .modal-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); }
+  .modal-header h3 { margin:0; font-size:15px; font-weight:600; }
+  .modal-close { width:28px; height:28px; border-radius:6px; border:none; background:#f3f4f6; cursor:pointer; font-size:16px; line-height:1; display:flex; align-items:center; justify-content:center; }
+  .modal-close:hover { background:#e5e7eb; }
+  .modal-body { flex:1; overflow:hidden; }
+  .modal-body iframe { width:100%; height:100%; border:none; }
 </style>
 </head>
 <body>
@@ -111,7 +126,7 @@
 
 <header class="page-head">
   <h1>🐾 OpenClaw · 组件 × 页面交叉索引</h1>
-  <span class="draft-tag">个人草稿 · feature/design-miekoyychen</span>
+  <span class="draft-tag">feature/design-addietang</span>
 </header>
 <div class="meta-line" id="metaLine">加载中…</div>
 
@@ -126,6 +141,8 @@
   <div class="search">
     <input id="searchInput" placeholder="搜索组件名 / 页面名 / 路径..." />
   </div>
+  <button class="toggle-btn" id="expandAllBtn">全部展开</button>
+  <button class="toggle-btn" id="collapseAllBtn">全部收起</button>
   <div class="total-line" id="totalLine"></div>
 </div>
 
@@ -209,6 +226,9 @@
     views.c2p.innerHTML = list.map((c) => {
       const collapsedDefault = c.usageCount === 0;
       const pTag = `<span class="tag ${c.priority.toLowerCase()}">${c.priority}${c.priority === "P0" ? " 必改" : ""}</span>`;
+      const refreshTag = c.designRefresh && c.designRefresh.status === "done"
+        ? `<span class="tag" style="background:#dcfce7;color:#166534;border-color:#86efac">✅ 已完成 by ${escapeHtml(c.designRefresh.owner)} (${c.designRefresh.date})</span>`
+        : "";
       const note = c.note ? `<div class="note">💡 ${escapeHtml(c.note)}</div>` : "";
       const dist = c.distribution;
       const distStr = `<span class="mono">分布：顶级 ${dist.top || 0} · 用户端 ${dist.tenant || 0} · 管理端·顶级 ${dist["admin-top"] || 0} · 管理端·子组件 ${dist["admin-sub"] || 0}</span>`;
@@ -235,7 +255,9 @@
         <div class="card-head" data-toggle>
           <span class="mono">${escapeHtml(c.file)}</span>
           ${pTag}
+          ${refreshTag}
           <div class="right">
+            <button class="preview-btn" data-component="${c.name}">预览</button>
             <span class="tag count">被 ${c.usageCount} 个页面引用</span>
           </div>
         </div>
@@ -486,6 +508,60 @@
 
   // 初始渲染
   renderCurrent();
+
+  // ---- Expand / Collapse All ----
+  document.getElementById("expandAllBtn").addEventListener("click", () => {
+    document.querySelectorAll("#view-c2p .card-body, #view-p2c .card-body").forEach((el) => el.classList.remove("collapsed"));
+  });
+  document.getElementById("collapseAllBtn").addEventListener("click", () => {
+    document.querySelectorAll("#view-c2p .card-body, #view-p2c .card-body").forEach((el) => el.classList.add("collapsed"));
+  });
+
+  // ---- Preview Modal ----
+  const PREVIEW_BASE = "http://localhost:5188/component-preview/";
+  const supportedPreviews = ["input", "select"];
+
+  const modalOverlay = document.createElement("div");
+  modalOverlay.className = "modal-overlay";
+  modalOverlay.innerHTML = `
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-title">组件预览</h3>
+        <button class="modal-close" id="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <iframe id="preview-iframe" src="about:blank"></iframe>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modalOverlay);
+
+  const previewIframe = document.getElementById("preview-iframe");
+  const modalTitle = document.getElementById("modal-title");
+
+  modalOverlay.addEventListener("click", (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+  document.getElementById("modal-close-btn").addEventListener("click", closeModal);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+  function openModal(name) {
+    modalTitle.textContent = name + ".tsx 预览";
+    previewIframe.src = PREVIEW_BASE + name;
+    modalOverlay.classList.add("open");
+  }
+  function closeModal() {
+    modalOverlay.classList.remove("open");
+    previewIframe.src = "about:blank";
+  }
+
+  // 委托点击事件给预览按钮
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".preview-btn");
+    if (!btn || btn.closest("#searchBar")) return;
+    e.stopPropagation();
+    openModal(btn.dataset.component);
+  });
 })();
 </script>
 </body>

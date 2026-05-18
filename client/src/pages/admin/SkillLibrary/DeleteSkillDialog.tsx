@@ -73,7 +73,7 @@ export default function DeleteSkillDialog({
           <AlertDialogCancel>取消</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="bg-red-500 hover:bg-red-600 text-white"
+            className="bg-destructive text-white hover:bg-destructive/90"
           >
             确认删除
           </AlertDialogAction>

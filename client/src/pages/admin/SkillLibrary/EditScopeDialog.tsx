@@ -235,7 +235,7 @@ export default function EditScopePopover({
               className="h-7 text-xs px-3"
               disabled={isConfirmDisabled}
               onClick={handleConfirm}
-              style={isConfirmDisabled ? undefined : { background: 'linear-gradient(90deg, #020617 70%, #1447E6 100%)' }}
+             
             >
               确认
             </Button>

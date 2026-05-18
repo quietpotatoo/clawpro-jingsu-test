@@ -1285,7 +1285,6 @@ function CreateSecurityGroupDialog({
             取消
           </Button>
           <Button
-            className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={onConfirm}
             disabled={isCreateDisabled}
           >
@@ -1713,15 +1712,16 @@ function GroupTagSelector({
           >
             <X className="w-3.5 h-3.5" />
           </button>
-          <button
+          <Button
             type="button"
             onClick={saveEditing}
             disabled={!draftIds || draftIds.length === 0}
-            className="shrink-0 w-7 h-7 inline-flex items-center justify-center rounded-[4px] bg-blue-500 text-white hover:bg-blue-600 transition-colors disabled:bg-gray-100 disabled:text-gray-300 disabled:hover:bg-gray-100 disabled:cursor-not-allowed"
+            size="sm"
+            className="shrink-0 w-7 h-7 p-0"
             title={!draftIds || draftIds.length === 0 ? "请至少选择一个分组" : "保存"}
           >
             <Check className="w-3.5 h-3.5" />
-          </button>
+          </Button>
         </div>
       ) : valueIds.length === 0 ? (
         // idle 空态：显示"+ 添加分组策略"按钮
@@ -2428,7 +2428,7 @@ export default function SecurityGroupManagement() {
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={closeMigrationDialog}>取消</Button>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => startMigrationRun("all")}>
+          <Button onClick={() => startMigrationRun("all")}>
             开始迁移
           </Button>
         </DialogFooter>
@@ -2561,18 +2561,18 @@ export default function SecurityGroupManagement() {
             migrationBusinessState === "failed" ? (
               <>
                 <Button variant="outline" onClick={closeMigrationDialog}>稍后处理</Button>
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => startMigrationRun("retryFailed")}>
+                <Button onClick={() => startMigrationRun("retryFailed")}>
                   重试失败实例
                 </Button>
               </>
             ) : (
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={closeMigrationDialog}>
+              <Button onClick={closeMigrationDialog}>
                 完成
               </Button>
             )
           ) : isCurrentRunCompleted ? (
             isRetryRunCompletedWithAllSuccess ? (
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={closeMigrationDialog}>
+              <Button onClick={closeMigrationDialog}>
                 完成
               </Button>
             ) : currentRunFailedMigrationTasks.length > 0 ? (
@@ -2580,12 +2580,12 @@ export default function SecurityGroupManagement() {
                 <Button variant="outline" onClick={closeMigrationDialog}>
                   最小化
                 </Button>
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => openMigrationResultDialog()}>
+                <Button onClick={() => openMigrationResultDialog()}>
                   下一步：查看结果
                 </Button>
               </>
             ) : (
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => openMigrationResultDialog()}>
+              <Button onClick={() => openMigrationResultDialog()}>
                 下一步：查看结果
               </Button>
             )
@@ -3126,7 +3126,6 @@ export default function SecurityGroupManagement() {
             </Button>
             <Button
               size="sm"
-              className="bg-blue-600 hover:bg-blue-700 text-white"
               disabled={!selectedSecurityGroup}
               onClick={onConfirm}
             >
@@ -3360,8 +3359,6 @@ export default function SecurityGroupManagement() {
                     <div className="flex gap-3 mb-4">
                       <Button
                         onClick={openCreateSecurityGroupDialog}
-                        className="bg-blue-600 hover:bg-blue-700 text-white h-9 px-6 text-sm btn-primary-glow"
-                        style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
                       >
                         自定义规则
                       </Button>
@@ -3406,8 +3403,8 @@ export default function SecurityGroupManagement() {
                       if (!currentSg) return;
                       setShowAddDialog(securityTab);
                     }}
-                    className={`h-8 gap-1 text-white ${currentSg ? 'btn-primary-glow' : 'opacity-50 cursor-not-allowed'}`}
-                    style={{ background: currentSg ? "linear-gradient(90deg, #020617 70%, #1447E6 100%)" : "#d1d5db" }}
+                    disabled={!currentSg}
+                    className="h-8 gap-1"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     添加规则
@@ -4178,7 +4175,6 @@ export default function SecurityGroupManagement() {
                 <Button variant="outline" size="sm" onClick={() => setShowEditVpcDialog(null)}>取消</Button>
                 <Button
                   size="sm"
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
                   onClick={() => {
                     if (!showEditVpcDialog) return;
                     const isEnterprise = showEditVpcDialog.type === "enterprise";
@@ -4296,7 +4292,7 @@ export default function SecurityGroupManagement() {
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowDeleteVpcDialog(null)}>取消</Button>
                 <Button
-                  className="bg-red-500 hover:bg-red-600 text-white"
+                  variant="destructive"
                   onClick={() => {
                     if (!showDeleteVpcDialog) return;
                     setVpcList((prev) => prev.filter((r) => r.id !== showDeleteVpcDialog.id));
@@ -4347,7 +4343,6 @@ export default function SecurityGroupManagement() {
                     <DialogFooter>
                       <Button variant="outline" onClick={() => setPendingVpcSave(null)}>取消</Button>
                       <Button
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
                         onClick={() => {
                           pendingVpcSave.execute();
                           setPendingVpcSave(null);
@@ -4376,7 +4371,7 @@ export default function SecurityGroupManagement() {
               {isPublicDirty && (
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" onClick={handlePublicDiscard} className="h-7 px-3 text-xs text-gray-500">取消</Button>
-                  <Button size="sm" className="h-7 px-3 text-xs bg-blue-600 hover:bg-blue-700 text-white" onClick={handlePublicSave}>保存</Button>
+                  <Button size="sm" className="h-7 px-3 text-xs" onClick={handlePublicSave}>保存</Button>
                 </div>
               )}
             </div>
@@ -4726,7 +4721,6 @@ export default function SecurityGroupManagement() {
               取消
             </Button>
             <Button
-              className="bg-blue-600 hover:bg-blue-700 text-white"
               onClick={() => {
                 if (sgDialogPreviewSecurityGroup) {
                   applyCurrentSecurityGroup(sgDialogPreviewSecurityGroup);
@@ -4857,7 +4851,6 @@ export default function SecurityGroupManagement() {
                   取消
                 </Button>
                 <Button
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
                   onClick={() => {
                     if (!addDraft.source?.trim()) {
                       toast.error(showAddDialog === "inbound" ? "请填写来源" : "请填写目标");
@@ -5011,7 +5004,6 @@ export default function SecurityGroupManagement() {
                 取消
               </Button>
               <Button
-                className="bg-blue-600 hover:bg-blue-700 text-white"
                 onClick={() => {
                   if (!editDraft.source?.trim()) {
                     toast.error(editingRule?.type === "inbound" ? "请填写来源" : "请填写目标");
@@ -5075,7 +5067,7 @@ export default function SecurityGroupManagement() {
               取消
             </Button>
             <Button
-              className="bg-red-600 hover:bg-red-700 text-white border-transparent"
+              variant="destructive"
               onClick={() => {
                 if (!showDeleteDialog) return;
                 const snapshot = showDeleteDialog;

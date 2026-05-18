@@ -430,8 +430,6 @@ export function GroupFormDialog({
               if (!isValid) return;
               onConfirm(name.trim(), parentId);
             }}
-            style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
-            className="text-white"
           >
             {confirmText}
           </Button>
@@ -630,7 +628,7 @@ export function DeleteGroupDialog({
           </Button>
           {canDelete && (
             <Button
-              className="bg-red-500 hover:bg-red-600 text-white"
+              variant="destructive"
               onClick={() => group && onConfirm(group.id)}
             >
               确认删除

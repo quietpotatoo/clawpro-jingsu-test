@@ -2395,8 +2395,7 @@ export default function ChatView({
                           onClick={handleSend}
                           disabled={!inputText.trim() || currentIsTyping}
                           className="w-7 h-7 rounded-full flex items-center justify-center text-white transition-all duration-150 disabled:opacity-30"
-                          // allow-inline-gradient: 圆形发送按钮非标准矩形按钮，属于 SKILL §8.1 白名单场景
-                          style={{ background: inputText.trim() && !currentIsTyping ? "linear-gradient(90deg, #020617 70%, #1447E6 100%)" : "#d1d5db" }}
+                          // allow-inline-gradient: 圆形发送按钮非标准矩形按钮，属于 SKILL §8.1 白名单场景}
                         >
                           <Send className="w-3 h-3" />
                         </button>

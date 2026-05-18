@@ -470,7 +470,7 @@ rm -f /tmp/openclaw-state.tgz`;
                 <SecretInput value={srcSk} onChange={setSrcSk} placeholder="源端 SecretKey" />
               </div>
               <div className="flex-shrink-0 pt-5">
-                <Button size="sm" onClick={fetchInstances} disabled={!srcAk || !srcSk || srcLoading} style={{ background: "#1447E6" }} className="h-8">
+                <Button size="sm" onClick={fetchInstances} disabled={!srcAk || !srcSk || srcLoading} className="h-8">
                   {srcLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : <Search className="w-3.5 h-3.5 mr-1" />}
                   获取实例
                 </Button>
@@ -823,7 +823,7 @@ rm -f /tmp/openclaw-state.tgz`;
                   <Button variant="outline" size="sm" onClick={() => toast.info("跳转到列表")} className="h-7 text-xs">
                     <ExternalLink className="w-3 h-3 mr-1" /> Agent 列表
                   </Button>
-                  <Button size="sm" onClick={resetAll} style={{ background: "#1447E6" }} className="h-7 text-xs">
+                  <Button size="sm" onClick={resetAll} className="h-7 text-xs">
                     <RefreshCw className="w-3 h-3 mr-1" /> 新建迁移
                   </Button>
                 </div>

@@ -229,7 +229,6 @@ function SkillSourceTab() {
                 size="sm"
                 onClick={handleSave}
                 className="gap-1"
-                style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
               >
                 <Check className="w-3.5 h-3.5" />
                 保存

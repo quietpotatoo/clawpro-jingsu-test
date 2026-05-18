@@ -841,7 +841,7 @@ export default function GroupView({
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditGroupAgentDialog(null)}>取消</Button>
             <Button
-              style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
+             
               className="text-white"
               onClick={() => {
                 editGroupAgentDialog?.pendingAction();

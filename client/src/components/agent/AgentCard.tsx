@@ -434,7 +434,7 @@ export const AgentCard = ({
           >
             <MessageSquare
               className="w-3.5 h-3.5"
-              style={{ color: "#737373" }}
+            />
             />
           </Button>
         </div>

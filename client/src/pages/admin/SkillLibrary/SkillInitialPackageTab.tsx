@@ -1290,7 +1290,7 @@ function PackageDetailView({ pkg, onBack, onPublish, onRemoveSkill }: PackageDet
                 <Button
                   size="sm"
                   onClick={handleSave}
-                  className="h-7 px-3 text-xs bg-blue-600 hover:bg-blue-700 text-white"
+                  className="h-7 px-3 text-xs"
                 >
                   保存
                 </Button>
@@ -1744,7 +1744,7 @@ export default function SkillInitialPackageTab({ onPackagesChange }: SkillInitia
               );
             })()}
           </div>
-          <Button size="sm" onClick={() => setShowCreateDialog(true)} className="gap-1.5" style={{ background: 'linear-gradient(90deg, #020617 70%, #1447E6 100%)' }}>
+          <Button size="sm" onClick={() => setShowCreateDialog(true)} className="gap-1.5">
             <Plus className="w-4 h-4" />
             新建
           </Button>

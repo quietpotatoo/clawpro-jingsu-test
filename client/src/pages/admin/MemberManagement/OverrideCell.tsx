@@ -249,7 +249,7 @@ function ConflictPopover({
           <Button
             size="sm"
             className="text-white"
-            style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
+           
             onClick={handleConfirm}
           >
             确定本次选择

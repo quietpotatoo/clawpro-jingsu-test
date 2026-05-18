@@ -1223,7 +1223,7 @@ export default function SkillDetail({ skillId, onBack, skills, defaultTab, onSki
             <AlertDialogCancel>取消</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleSecurityScan}
-              style={{ background: 'linear-gradient(90deg, #020617 70%, #1447E6 100%)' }}
+             
               className="text-white border-0"
             >
               确认检测

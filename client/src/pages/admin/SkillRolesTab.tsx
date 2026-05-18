@@ -257,7 +257,6 @@ function EditRoleScopePopover({
               className="h-7 text-xs px-3"
               disabled={isConfirmDisabled}
               onClick={handleConfirm}
-              style={isConfirmDisabled ? undefined : { background: 'linear-gradient(90deg, #020617 70%, #1447E6 100%)' }}
             >
               确认
             </Button>
@@ -1614,8 +1613,6 @@ function RoleEditModal({
             <Button variant="outline" onClick={onClose}>取消</Button>
             <Button
               onClick={handleSave}
-              className="text-white"
-              style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
             >
               保存
             </Button>
@@ -1900,8 +1897,6 @@ export default function SkillRolesTab() {
           </div>
           <Button
             onClick={handleNew}
-            className="text-white"
-            style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
           >
             <Plus className="w-4 h-4 mr-1.5" />
             自定义角色
@@ -1975,7 +1970,7 @@ export default function SkillRolesTab() {
             <AlertDialogCancel>取消</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-destructive text-white hover:bg-destructive/90"
             >
               确认删除
             </AlertDialogAction>

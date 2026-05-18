@@ -1553,7 +1553,7 @@ export default function SkillListTab({ onSelectSkill }: SkillListTabProps) {
             <AlertDialogAction
               onClick={handleSecurityScanConfirm}
               className="text-white"
-              style={{ background: 'linear-gradient(90deg, #020617 70%, #1447E6 100%)' }}
+             
             >
               提交检测
             </AlertDialogAction>

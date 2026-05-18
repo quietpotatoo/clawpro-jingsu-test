@@ -1672,7 +1672,7 @@ function DepartmentFilter({
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             <Button variant="ghost" size="sm" className="text-xs text-gray-500 h-7 px-2" onClick={handleCancel}>取消</Button>
-            <Button size="sm" className="text-xs h-7 px-3" style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }} onClick={handleConfirm}>确认</Button>
+            <Button size="sm" className="text-xs h-7 px-3" onClick={handleConfirm}>确认</Button>
           </div>
         </div>
       </PopoverContent>
@@ -1743,7 +1743,7 @@ function CredentialResultDialog({
           {/* 复制按钮 */}
           <Button
             className="w-full"
-            style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
+           
             onClick={handleCopy}
           >
             {copied ? (
@@ -2524,7 +2524,7 @@ export default function MemberManagement() {
                     onMouseLeave={() => setAddBtnHovered(false)}
                   >
                     <div className="relative">
-                      <Button className="pointer-events-none select-none h-8 text-sm" style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }} tabIndex={-1} aria-disabled="true">
+                      <Button className="pointer-events-none select-none h-8 text-sm" tabIndex={-1} aria-disabled="true">
                         <Plus className="w-4 h-4 mr-1.5" />添加用户<ChevronDown className="w-3.5 h-3.5 ml-1.5" />
                       </Button>
                       <div className="absolute inset-0 rounded-[4px] bg-white/50 pointer-events-none" />
@@ -2538,7 +2538,7 @@ export default function MemberManagement() {
                 ) : (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button className="h-8 text-sm" style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>
+                      <Button className="h-8 text-sm">
                         <Plus className="w-4 h-4 mr-1.5" />添加用户<ChevronDown className="w-3.5 h-3.5 ml-1.5" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -3019,7 +3019,7 @@ export default function MemberManagement() {
           />
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAddDialog(false)}>取消</Button>
-            <Button onClick={handleAdd} style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>确认添加</Button>
+            <Button onClick={handleAdd}>确认添加</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -3052,7 +3052,7 @@ export default function MemberManagement() {
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditMemberId(null)}>取消</Button>
-            <Button onClick={handleEdit} style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>保存修改</Button>
+            <Button onClick={handleEdit}>保存修改</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -3266,7 +3266,7 @@ export default function MemberManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => { setShowResetDialog(null); setResetForm({ ...emptyResetForm }); }}>取消</Button>
-            <Button onClick={handleReset} style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>
+            <Button onClick={handleReset}>
               确认重置
             </Button>
           </DialogFooter>
@@ -3491,8 +3491,6 @@ export default function MemberManagement() {
                   setSyncAgentInstanceChoice("keep");
                 }
               }}
-              style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
-              className="text-white btn-primary-glow"
             >
               知道了
             </Button>
@@ -3639,7 +3637,7 @@ export default function MemberManagement() {
             {(deleteCheckDialog?.clawCount ?? 0) === 0 &&
               (deleteCheckDialog?.vpcType === "custom" || deleteCheckDialog?.hasVpcResources === false) && (
                 <Button
-                  className="bg-red-500 hover:bg-red-600 text-white"
+                  variant="destructive"
                   onClick={() => {
                     const d = deleteCheckDialog!;
                     setDeleteCheckDialog(null);
@@ -3768,7 +3766,7 @@ export default function MemberManagement() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteConfirmDialog(null)}>取消</Button>
             <Button
-              className="bg-red-500 hover:bg-red-600 text-white"
+              variant="destructive"
               onClick={() => handleDelete(deleteConfirmDialog!.memberId)}
             >
               确认删除
@@ -3834,7 +3832,7 @@ export default function MemberManagement() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setAgentInstanceDialog(null)}>取消</Button>
             <Button
-              style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
+             
               className="text-white"
               onClick={() => {
                 agentInstanceDialog?.pendingAction();
@@ -3906,7 +3904,7 @@ export default function MemberManagement() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setSyncAgentInstanceDialog(null)}>取消</Button>
             <Button
-              style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
+             
               className="text-white"
               onClick={() => {
                 setSyncAgentInstanceDialog(null);
@@ -3965,7 +3963,7 @@ export default function MemberManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCreateGroupDialog(false)}>取消</Button>
-            <Button onClick={handleCreateGroup} style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>确认创建</Button>
+            <Button onClick={handleCreateGroup}>确认创建</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -4043,7 +4041,7 @@ export default function MemberManagement() {
               const configs = deleteGroupDialog ? (MOCK_GROUP_CONFIGS[deleteGroupDialog.groupId] || []) : [];
               const hasRelatedConfigs = configs.some((c) => c.items.length > 0);
               return !hasRelatedConfigs && (
-                <Button className="bg-red-500 hover:bg-red-600 text-white" onClick={() => deleteGroupDialog && handleDeleteGroup(deleteGroupDialog.groupId)}>
+                <Button variant="destructive" onClick={() => deleteGroupDialog && handleDeleteGroup(deleteGroupDialog.groupId)}>
                   确认删除
                 </Button>
               );
@@ -4075,7 +4073,7 @@ export default function MemberManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setRemoveFromGroupDialog(null)}>取消</Button>
-            <Button className="bg-red-500 hover:bg-red-600 text-white" onClick={() => {
+            <Button variant="destructive" onClick={() => {
               if (removeFromGroupDialog) {
                 handleRemoveFromGroup(removeFromGroupDialog.groupId, removeFromGroupDialog.memberId);
                 setRemoveFromGroupDialog(null);
@@ -4196,7 +4194,7 @@ export default function MemberManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => { setShowAddToGroupDialog(false); setAddToGroupSearch(""); setAddToGroupSelected([]); setAddToGroupDeptFilter(""); }}>取消</Button>
-            <Button onClick={handleAddMembersToGroup} disabled={addToGroupSelected.length === 0} style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>
+            <Button onClick={handleAddMembersToGroup} disabled={addToGroupSelected.length === 0}>
               确认添加
             </Button>
           </DialogFooter>
@@ -4266,7 +4264,7 @@ export default function MemberManagement() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteAuthSourceConfirm(null)}>取消</Button>
             <Button
-              className="bg-red-500 hover:bg-red-600 text-white"
+              variant="destructive"
               onClick={() => {
                 if (deleteAuthSourceConfirm?.source) {
                   setConfiguredAuthSources(configuredAuthSources.filter((s) => s.id !== deleteAuthSourceConfirm.source.id));

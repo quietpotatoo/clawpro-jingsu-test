@@ -10,6 +10,7 @@ import {
   X,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import {
@@ -1045,7 +1046,7 @@ export const InstanceTable: React.FC<InstanceTableProps> = ({
                           ))}
                         </div>
                         <div className="border-t border-gray-100 p-2 flex gap-2">
-                          <button 
+                          <button
                             className="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-[4px] hover:bg-gray-50"
                             onClick={() => {
                               setTempSelectedMemoryStates(new Set(['none', 'free', 'pro']));
@@ -1053,8 +1054,9 @@ export const InstanceTable: React.FC<InstanceTableProps> = ({
                           >
                             重置
                           </button>
-                          <button 
-                            className="flex-1 px-3 py-1.5 text-sm bg-blue-500 text-white rounded-[4px] hover:bg-blue-600"
+                          <Button
+                            size="sm"
+                            className="flex-1"
                             onClick={() => {
                               setSelectedMemoryStates(new Set(tempSelectedMemoryStates));
                               setShowMemoryFilter(false);
@@ -1062,7 +1064,7 @@ export const InstanceTable: React.FC<InstanceTableProps> = ({
                             }}
                           >
                             确认
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </>

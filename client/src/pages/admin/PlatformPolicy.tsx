@@ -710,7 +710,7 @@ function LabeledOptionIndicator<T extends string>({
           </div>
           <div className="flex items-center justify-end gap-2 px-3.5 py-2.5 border-t border-gray-100">
             <Button size="sm" variant="outline" className="h-7 text-xs px-3" onClick={() => setOpen(false)}>取消</Button>
-            <Button size="sm" className="h-7 text-xs px-3" onClick={handleConfirm} style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>确认</Button>
+            <Button size="sm" className="h-7 text-xs px-3" onClick={handleConfirm}>确认</Button>
           </div>
         </PopoverContent>
       </Popover>

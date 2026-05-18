@@ -252,26 +252,129 @@ font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
 ### 8.1 按钮
 
-**主按钮 CTA**（品牌渐变）：
+**变体（variant）**：
+
+| 变体 | 用途 | normal | hover | active | disabled |
+|------|------|--------|-------|--------|----------|
+| `default` / `claw-primary` | 主操作 | 黑蓝渐变 #020617→#1447E6 | 渐变加深→#0A226F | 叠加白20% | 叠加白30%+文字50% |
+| `outline` / `claw-outline` | 次要操作 | 白底+#e5e5e5边 | #f5f5f5底+#e3e3e3边 | 白底+#e3e3e3边 | 文字rgba(2,6,23,0.3) |
+| `destructive` | 危险操作 | #d42a1e | #b91c1c | #991b1b | 40%透明度 |
+| `ghost` | 辅助操作 | 无背景 | #f5f5f5底 | #ebebeb底 | 文字30%透明 |
+| `link` | 链接样式 | #1447e6 | 加下划线 | #0a226f | 40%透明 |
+
+**尺寸（size）**：
+
+| 尺寸 | 高度 | 类名 | 用途 |
+|------|------|------|------|
+| lg / claw-lg | 40px (`h-10`) | `size="lg"` | 突出 CTA、页面主操作 |
+| default / claw | 36px (`h-9`) | `size="default"` | 常规操作（默认） |
+| sm / claw-sm | 32px (`h-8`) | `size="sm"` | 表格行操作、紧凑场景 |
+| icon | 36px (`size-9`) | `size="icon"` | 纯图标按钮 |
+
+**关键约束**：
+1. **同行高度一致**：按钮与 Input、Select 等组件在同一行时，必须使用相同高度档位（如搜索栏中 Input h-9 + Button h-9），禁止出现高度不对齐
+2. 所有 disabled 态必须有 `cursor-not-allowed` 禁用手势
+3. 不再使用全局 `opacity-50` 表示禁用，每个变体有独立的禁用视觉
+4. 主按钮不再使用旧的 `linear-gradient(135deg, #007AFF, #5856D6)`，统一使用黑蓝渐变
+
 ```jsx
-<Button style={{ background: "linear-gradient(135deg, #007AFF, #5856D6)" }} className="text-white btn-primary-glow">
+// 主操作
+<Button>创建 Agent</Button>
+// 次要操作
+<Button variant="outline">详细配置</Button>
+// 危险操作
+<Button variant="destructive">删除</Button>
+// 搜索栏（与 Input 同行同高）
+<div className="flex gap-3 items-center">
+  <Input className="w-64" placeholder="搜索..." />
+  <Button variant="outline" size="default">搜索</Button>  {/* 都是 h-9 */}
+</div>
 ```
 
-**尺寸**：
-| 尺寸 | 类 | 用途 |
+### 8.2 输入框 Input
+
+基于 shadcn/ui Input 组件，视觉刷新后的统一规范：
+
+| 属性 | 值 | 说明 |
 |------|-----|------|
-| default | `h-9 px-4 py-2` | 常规操作 |
-| sm | `h-8 px-3` | 表格行操作 |
-| lg | `h-10 px-6` | 突出 CTA |
-| icon | `size-9` | 纯图标按钮 |
+| 高度 | `h-9`（36px） | 与同行组件保持一致 |
+| 圆角 | `rounded-[4px]` | 4px |
+| 边框 | `border-[#d3d6db]` | 默认态 |
+| hover 边框 | `border-[#1447e6]` | 蓝色 |
+| focus 边框 | `border-[#1447e6]` | 蓝色，无 ring/shadow |
+| 报错边框 | `border-[#d42a1e]` | 红色 |
+| placeholder | `text-[#b0b6c3]` | 浅灰 |
+| 文字色 | `text-[#020617]` | 近黑 |
+| disabled 背景 | `bg-[#f3f3f4]` | 浅灰底，不用 opacity |
+| disabled 文字 | `text-[#b0b6c3]` | 浅灰 |
+| 内边距 | `px-3 py-[5px]` | 左右12px |
 
-**变体使用规则**：
-- 主操作 → `default` + 品牌渐变 inline style
-- 次要操作 → `variant="outline"`
-- 危险操作 → `bg-red-500 hover:bg-red-600 text-white`
-- 辅助操作 → `variant="ghost"`
+**错误状态**需配合提示文字：
+```jsx
+<div className="space-y-2">
+  <Input aria-invalid placeholder="请输入企业邮箱" />
+  <p className="text-xs text-[#d42a1e] leading-5">请输入正确企业邮箱</p>
+</div>
+```
 
-### 8.2 状态徽章
+**关键约束**：
+- hover/focus 仅变边框颜色，不加 ring 或 box-shadow
+- disabled 态用背景色区分，不用 opacity
+- 报错信息字号 12px，颜色 `#d42a1e`
+- **同行高度一致**：与 Button、Select 在同一行时，必须使用相同高度档位（默认都是 h-9 = 36px）
+
+### 8.2.1 下拉选择 Select
+
+基于 shadcn/ui Select (Radix) 组件，视觉刷新后的统一规范：
+
+**SelectTrigger（触发器）**：
+
+| 属性 | 值 | 说明 |
+|------|-----|------|
+| 高度 | `h-9`（36px） | 与 Input 一致 |
+| 圆角 | `rounded-[4px]` | 4px |
+| 边框 | `border-[#d3d6db]` | 默认态 |
+| hover/展开 边框 | `border-[#1447e6]` | 蓝色 |
+| placeholder | `text-[#b0b6c3]` | 未选择时 |
+| 已选值 | `text-black` | 选中后 |
+| disabled | `bg-[#f3f3f4] border-[#d3d6db] text-[#b0b6c3]` | |
+| 箭头图标 | `text-[#7b818f]`，展开时旋转180° | |
+
+**SelectContent（下拉面板）**：
+
+| 属性 | 值 |
+|------|-----|
+| 背景 | `bg-white` |
+| 圆角 | `rounded-[4px]` |
+| 阴影 | `0px 0px 2px rgba(0,0,0,0.1), 0px 4px 16px rgba(0,0,0,0.12)` |
+| 内边距 | `p-2`（8px） |
+| 无 border | — |
+
+**SelectItem（选项条目）**：
+
+| 属性 | 值 |
+|------|-----|
+| 高度 | `h-8`（32px） |
+| 圆角 | `rounded-[6px]` |
+| 内边距 | `px-3 py-[9px]` |
+| hover 背景 | `bg-[#f3f3f4]` |
+| 字号 | 14px，PingFang SC |
+| 选中态 | `text-[#1447e6] font-medium` + 蓝色勾号 |
+
+```jsx
+<Select>
+  <SelectTrigger className="w-[200px]">
+    <SelectValue placeholder="请选择所属行业" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="gov">政务</SelectItem>
+    <SelectItem value="internet">互联网</SelectItem>
+    <SelectItem value="finance">金融</SelectItem>
+  </SelectContent>
+</Select>
+```
+
+### 8.2.2 状态徽章
 
 **必须使用自定义 class，不要自己发明新的状态样式**：
 
@@ -365,13 +468,51 @@ CSS 定义：
 </div>
 ```
 
-### 8.7 Dialog
+### 8.7 Dialog（参考 Ant Design Modal）
 
+**视觉参数**：
+
+| 属性 | 值 |
+|------|-----|
+| 圆角 | `8px` |
+| 遮罩 | `rgba(0,0,0,0.45)` |
+| 阴影 | `0 6px 16px 0 rgba(0,0,0,0.08), 0 3px 6px -4px rgba(0,0,0,0.12), 0 9px 28px 8px rgba(0,0,0,0.05)` |
+| 分割线 | **无**（Header/Footer 均无分割线） |
+| 标题 | `16px font-semibold rgba(0,0,0,0.88)` |
+| 描述 | `14px text-[#7b818f]` |
+| 关闭按钮 | 右上角 20px `#7b818f` hover 变深 |
+| Content padding | `px-6 pb-6`（内容区自动继承） |
+
+**尺寸规范**：
 - 小确认框：`sm:max-w-sm`
 - 中表单：`sm:max-w-md`
 - 大表单：`sm:max-w-lg`
 - 详情查看：`sm:max-w-2xl`
 - 长表单加：`max-h-[90vh] overflow-y-auto`
+
+**关键约束**：
+- 不加 Header/Footer 分割线
+- Footer 按钮右对齐，取消在左确认在右
+- 危险操作确认按钮用 `variant="destructive"`
+
+```jsx
+<Dialog>
+  <DialogTrigger asChild>
+    <Button variant="outline">打开弹窗</Button>
+  </DialogTrigger>
+  <DialogContent className="sm:max-w-md">
+    <DialogHeader>
+      <DialogTitle>确认操作</DialogTitle>
+      <DialogDescription>这是描述信息。</DialogDescription>
+    </DialogHeader>
+    <div>内容区域（自动有 px-6 padding）</div>
+    <DialogFooter>
+      <Button variant="outline">取消</Button>
+      <Button>确认</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
 
 ### 8.8 提示横幅
 
@@ -520,8 +661,9 @@ CSS 定义：
 ## 12. 关键约束（必须遵守）
 
 1. **不要引入新的 CSS 框架或 UI 库**。所有组件基于 Tailwind CSS + shadcn/ui + 自定义样式实现。
-2. **不要使用 shadcn Card 替代原生 div 卡片**。项目中卡片使用 `<div className="bg-white rounded-2xl border border-gray-100">` + inline boxShadow。
-3. **不要使用 shadcn Table 替代原生 table**。项目中表格使用原生 `<table>` + 自定义类。
+2. **不要修改 Landing Page（`client/src/pages/landing/`）**。落地页使用自定义样式，全局组件改动不应涉及该目录下的任何文件。
+3. **不要使用 shadcn Card 替代原生 div 卡片**。项目中卡片使用 `<div className="bg-white rounded-2xl border border-gray-100">` + inline boxShadow。
+4. **不要使用 shadcn Table 替代原生 table**。项目中表格使用原生 `<table>` + 自定义类。
 4. **不要发明新的状态颜色**。运行/停止/待处理严格使用 `badge-running` / `badge-stopped` / `badge-pending`。
 5. **不要使用 emoji 作为图标**。统一使用 `lucide-react`。
 6. **所有页面根元素必须包含 `page-enter` class**。

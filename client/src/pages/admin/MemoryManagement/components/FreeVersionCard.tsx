@@ -91,7 +91,7 @@ export const FreeVersionCard: React.FC<FreeVersionCardProps> = ({
               <div className="flex items-center gap-3">
                 <div
                   className="w-9 h-9 rounded-[4px] flex items-center justify-center flex-shrink-0"
-                  style={{ background: 'linear-gradient(90deg, #020617 70%, #1447E6 100%)' }}
+                 
                 >
                   <Zap className="w-5 h-5 text-white" />
                 </div>
@@ -178,8 +178,6 @@ export const FreeVersionCard: React.FC<FreeVersionCardProps> = ({
               <Button
                 onClick={handleConfirm}
                 disabled={!confirmChecked}
-                className="text-white disabled:opacity-50"
-                style={{ background: 'linear-gradient(90deg, #020617 70%, #1447E6 100%)' }}
               >
                 确认开启
               </Button>
@@ -226,7 +224,7 @@ export const FreeVersionCard: React.FC<FreeVersionCardProps> = ({
               <Button
                 onClick={handleConfirm}
                 disabled={!confirmChecked}
-                className="bg-red-600 hover:bg-red-700 text-white disabled:opacity-50"
+                className="bg-red-600 hover:bg-red-700 text-white"
               >
                 确认关闭
               </Button>

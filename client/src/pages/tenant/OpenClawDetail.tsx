@@ -2447,7 +2447,7 @@ echo "✅ 导出完成，数据已上传到 COS"`;
               <div className="mt-5 flex justify-center">
                 <Button
                   onClick={() => setShowQrModal(false)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+                  className="px-8"
                 >
                   完成
                 </Button>
@@ -2532,7 +2532,7 @@ echo "✅ 导出完成，数据已上传到 COS"`;
                     }
                     toast.success("飞书机器人已添加并应用");
                   }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6"
+                  className="px-6"
                 >
                   完成
                 </Button>
@@ -2676,7 +2676,7 @@ echo "✅ 导出完成，数据已上传到 COS"`;
               size="sm"
               disabled={webUIStep < 2 && webUIFailedStep === "none"}
               onClick={webUIFailedStep !== "none" ? handleWebUIRetry : handleWebUIProgressConfirm}
-              className={`px-6 ${(webUIStep >= 2 || webUIFailedStep !== "none") ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-blue-600 text-white opacity-50 cursor-not-allowed'}`}
+              className={`px-6 ${(webUIStep >= 2 || webUIFailedStep !== "none") ? '' : 'opacity-50 cursor-not-allowed'}`}
             >
               {webUIFailedStep !== "none" ? "重试" : "确定"}
             </Button>
@@ -2780,7 +2780,7 @@ echo "✅ 导出完成，数据已上传到 COS"`;
             <Button
               size="sm"
               onClick={() => { window.open(webUIUrl, "_blank"); }}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+              className="px-8"
             >
               立即访问
             </Button>
@@ -2812,7 +2812,7 @@ echo "✅ 导出完成，数据已上传到 COS"`;
             <Button
               size="sm"
               onClick={handleStartUpdate}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-5"
+              className="px-5"
             >
               确认
             </Button>
@@ -2977,7 +2977,6 @@ echo "✅ 导出完成，数据已上传到 COS"`;
             <Button
               size="sm"
               variant="default"
-              className="bg-blue-600 hover:bg-blue-700 text-white"
               onClick={() => {
                 const { type, modelId } = modelConfirmDialog;
                 setModelConfirmDialog(prev => ({ ...prev, open: false }));
@@ -3035,7 +3034,6 @@ echo "✅ 导出完成，数据已上传到 COS"`;
             </Button>
             <Button
               size="sm"
-              className="bg-blue-600 hover:bg-blue-700 text-white"
               onClick={() => {
                 const name = skillInstallConfirm.skillName;
                 setSkillInstallConfirm({ open: false, skillName: "" });
@@ -3699,13 +3697,6 @@ function DiagOptionCard({ checked, onChange, title, description }: DiagOptionCar
       <span
         aria-hidden
         className="mt-0.5 flex-shrink-0 inline-flex items-center justify-center rounded-[5px] transition-all"
-        style={{
-          width: 16,
-          height: 16,
-          background: checked ? "linear-gradient(90deg, #020617 70%, #1447E6 100%)" : "#FFFFFF",
-          border: checked ? "1px solid transparent" : "1.5px solid #D5D8E0",
-          boxShadow: checked ? "0 1px 2px rgba(88,86,214,0.25)" : "none",
-        }}
       >
         {checked && (
           <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
@@ -3741,13 +3732,6 @@ function DiagOptionRow({ checked, onChange, title, description }: DiagOptionCard
       <span
         aria-hidden
         className="mt-0.5 flex-shrink-0 inline-flex items-center justify-center rounded-[5px] transition-all"
-        style={{
-          width: 16,
-          height: 16,
-          background: checked ? "linear-gradient(90deg, #020617 70%, #1447E6 100%)" : "#FFFFFF",
-          border: checked ? "1px solid transparent" : "1.5px solid #D5D8E0",
-          boxShadow: checked ? "0 1px 2px rgba(88,86,214,0.25)" : "none",
-        }}
       >
         {checked && (
           <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
@@ -4841,14 +4825,6 @@ function DoctorChatCard({ instanceId, instanceName }: { instanceId: string; inst
                 <span
                   aria-hidden
                   className="mt-0.5 flex-shrink-0 inline-flex items-center justify-center rounded-[5px] transition-all"
-                  style={{
-                    width: 16,
-                    height: 16,
-                    // allow-inline-gradient: 16×16 自定义 Checkbox 选中态色块（非按钮，SKILL §8.1 白名单）
-                    background: rollbackChecked ? "linear-gradient(90deg, #020617 70%, #1447E6 100%)" : "#FFFFFF",
-                    border: rollbackChecked ? "1px solid transparent" : "1.5px solid #D5D8E0",
-                    boxShadow: rollbackChecked ? "0 1px 2px rgba(88,86,214,0.25)" : "none",
-                  }}
                 >
                   {rollbackChecked && (
                     <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
@@ -5130,7 +5106,7 @@ function DoctorChatCard({ instanceId, instanceName }: { instanceId: string; inst
                     <button
                       onClick={handleStopStreaming}
                       // allow-inline-gradient: 圆形停止按钮（27×27 rounded-full，非标准矩形按钮，SKILL §8.1 白名单）
-                      style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
+                     
                       className="w-7 h-7 rounded-full flex items-center justify-center text-white transition-all hover:opacity-90"
                       title="暂停输出"
                     >
@@ -5144,12 +5120,7 @@ function DoctorChatCard({ instanceId, instanceName }: { instanceId: string; inst
                       onClick={handleSend}
                       disabled={inputDisabled || !input.trim()}
                       className="w-7 h-7 rounded-full flex items-center justify-center text-white transition-all duration-150 disabled:opacity-30"
-                      // allow-inline-gradient: 圆形发送按钮（27×27 rounded-full，非标准矩形按钮，SKILL §8.1 白名单）
-                      style={{
-                        background: input.trim() && !inputDisabled
-                          ? "linear-gradient(90deg, #020617 70%, #1447E6 100%)"
-                          : "#d1d5db",
-                      }}
+                      // allow-inline-gradient: 圆形发送按钮（27×27 rounded-full，非标准矩形按钮，SKILL §8.1 白名单）}
                       title="发送（Enter）"
                     >
                       <Send className="w-3 h-3" />

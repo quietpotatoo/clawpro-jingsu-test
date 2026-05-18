@@ -468,11 +468,6 @@ export default function AuthSourceImportDialog({
                     ? "text-white"
                     : "bg-gray-200 text-gray-400"
                 }`}
-                style={
-                  step >= s.num
-                    ? { background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }
-                    : undefined
-                }
               >
                 {step > s.num ? <Check className="w-3.5 h-3.5" /> : s.num}
               </div>
@@ -910,7 +905,7 @@ export default function AuthSourceImportDialog({
     <div className="flex flex-col items-center justify-center py-10">
       <div
         className="w-16 h-16 rounded-full flex items-center justify-center mb-5"
-        style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
+       
       >
         <CheckCircle className="w-8 h-8 text-white" />
       </div>
@@ -961,7 +956,6 @@ export default function AuthSourceImportDialog({
               </Button>
               <Button
                 onClick={handleNextToMapping}
-                style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
               >
                 下一步
               </Button>
@@ -974,7 +968,6 @@ export default function AuthSourceImportDialog({
               </Button>
               <Button
                 onClick={handleSubmit}
-                style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
               >
                 确定
               </Button>
@@ -983,7 +976,7 @@ export default function AuthSourceImportDialog({
           {step === 4 && (
             <Button
               onClick={() => onOpenChange(false)}
-              style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
+             
             >
               完成
             </Button>

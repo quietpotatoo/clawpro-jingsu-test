@@ -107,7 +107,7 @@ export const EnableConfirmDialog: React.FC<EnableConfirmDialogProps> = ({
           <Button
             onClick={handleConfirm}
             disabled={!isChecked}
-            className="bg-[#1447E6] text-white hover:bg-[#0051d5] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-[#1447E6] text-white hover:bg-[#0051d5]"
           >
             确认开启
           </Button>

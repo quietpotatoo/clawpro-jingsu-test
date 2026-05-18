@@ -484,7 +484,7 @@ export default function OpsObservation() {
               <Button
                 onClick={handleOpenCLS}
                 disabled={isEnablingCls}
-                className="ml-4 bg-blue-600 hover:bg-blue-700 text-white text-xs h-8 px-4 whitespace-nowrap disabled:opacity-50 flex-shrink-0"
+                className="ml-4 text-xs h-8 px-4 whitespace-nowrap flex-shrink-0"
               >
                 {isEnablingCls ? "开启中..." : "开启 CLS 日志服务"}
               </Button>
@@ -526,7 +526,6 @@ export default function OpsObservation() {
                 <Button
                   onClick={handleConfirmClsAgreement}
                   disabled={!clsAgreed || isEnablingCls}
-                  className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
                 >
                   {isEnablingCls ? "开启中..." : "确认"}
                 </Button>
@@ -682,7 +681,6 @@ export default function OpsObservation() {
                 }, 2000);
               }}
               disabled={isUpgradingPlugin || !selectedPluginVersion || selectedPluginVersion?.status === 'current'}
-              className="bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
             >
               {isUpgradingPlugin ? "升级中..." : "确认升级"}
             </Button>
@@ -961,7 +959,6 @@ export default function OpsObservation() {
             </Button>
             <Button
               onClick={handleGoToAuth}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               前往授权
             </Button>
@@ -1009,7 +1006,6 @@ export default function OpsObservation() {
             <Button
               onClick={handleConfirmFreeQuota}
               disabled={!freeQuotaAgreed}
-              className="bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-300"
             >
               确认
             </Button>
@@ -1074,7 +1070,7 @@ export default function OpsObservation() {
             <Button
               onClick={handleCloseCls}
               disabled={isClosingCls}
-              className="bg-red-600 hover:bg-red-700 disabled:opacity-50"
+              className="bg-red-600 hover:bg-red-700"
             >
               {isClosingCls ? "关闭中..." : "确定关闭"}
             </Button>

@@ -50,7 +50,7 @@ export default function DocManagement() {
             </p>
           </div>
           <Button onClick={() => setShowAddDialog(true)}
-            style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>
+           >
             <Plus className="w-4 h-4 mr-1.5" />
             添加文档
           </Button>
@@ -170,7 +170,7 @@ export default function DocManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAddDialog(false)}>取消</Button>
-            <Button onClick={handleAdd} style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>确认添加</Button>
+            <Button onClick={handleAdd}>确认添加</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

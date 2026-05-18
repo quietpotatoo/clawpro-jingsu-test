@@ -817,7 +817,7 @@ description: this is a skill creator.
           <Button
             onClick={handleSave}
             disabled={!formData.version || !!versionError}
-            style={{ background: 'linear-gradient(90deg, #020617 70%, #1447E6 100%)' }}
+           
             className="text-white hover:opacity-90 disabled:opacity-50"
           >
             保存更新

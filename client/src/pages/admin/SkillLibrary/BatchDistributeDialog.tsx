@@ -842,8 +842,6 @@ export default function BatchDistributeDialog({
           <Button
             onClick={handleDistribute}
             disabled={selectedInstances.length === 0}
-            className="btn-primary-glow text-white"
-            style={{ background: selectedInstances.length === 0 ? undefined : 'linear-gradient(90deg, #020617 70%, #1447E6 100%)' }}
           >
             确认下发（{selectedInstances.length}）
           </Button>
@@ -890,8 +888,6 @@ export default function BatchDistributeDialog({
           <Button
             onClick={handleConfirmDistribute}
             disabled={confirmInput !== '确认下发'}
-            className="text-white"
-            style={{ background: confirmInput === '确认下发' ? 'linear-gradient(90deg, #020617 70%, #1447E6 100%)' : undefined }}
           >
             确认下发
           </Button>

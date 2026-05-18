@@ -94,7 +94,14 @@
         "other": 0
       },
       "priority": "P0",
-      "note": "覆盖最广，全场景基石"
+      "note": "覆盖最广，全场景基石",
+      "designRefresh": {
+        "status": "done",
+        "owner": "addietang",
+        "date": "2026-05-18",
+        "figma": "https://www.figma.com/design/c5aMwnTTrqTJbIf7FDSsPp/clawpro%E7%BB%84%E4%BB%B6%E8%A1%A5%E5%85%85?node-id=3-76",
+        "changes": "主按钮:黑蓝渐变+hover深蓝+active叠白+disabled半透明; 次按钮:白底#e5边+hover灰底+disabled文字30%透明; 尺寸统一40/36/32px; disabled加cursor-not-allowed"
+      }
     },
     {
       "name": "dialog",
@@ -159,7 +166,14 @@
         "other": 0
       },
       "priority": "P0",
-      "note": "弹窗骨架，UI 一致性关键"
+      "note": "弹窗骨架，UI 一致性关键",
+      "designRefresh": {
+        "status": "done",
+        "owner": "addietang",
+        "date": "2026-05-18",
+        "figma": "TDesign Dialog 规范",
+        "changes": "圆角8px; 遮罩45%; 无分割线(参考AntDesign); Header pt-6 pb-3; Footer pt-4 pb-6 右对齐; 三层阴影; 标题16px 600 rgba(0,0,0,0.88); 关闭按钮20px"
+      }
     },
     {
       "name": "input",
@@ -218,7 +232,14 @@
         "other": 0
       },
       "priority": "P0",
-      "note": "表单核心"
+      "note": "表单核心",
+      "designRefresh": {
+        "status": "done",
+        "owner": "addietang",
+        "date": "2026-05-18",
+        "figma": "https://www.figma.com/design/1PraDigxMbE8KrBayR1bbb/ClawPro-%E9%A1%B9%E7%9B%AE%E8%AE%BE%E8%AE%A1?node-id=478-6376",
+        "changes": "边框色 #d3d6db → hover/focus #1447e6；报错 #d42a1e；disabled 用 bg-[#f3f3f4] 不用 opacity；去掉 ring/shadow；placeholder #b0b6c3"
+      }
     },
     {
       "name": "tooltip",
@@ -345,7 +366,14 @@
         "other": 0
       },
       "priority": "P0",
-      "note": "下拉选择，高频表单组件"
+      "note": "下拉选择，高频表单组件",
+      "designRefresh": {
+        "status": "done",
+        "owner": "addietang",
+        "date": "2026-05-18",
+        "figma": "https://www.figma.com/design/1PraDigxMbE8KrBayR1bbb/ClawPro-%E9%A1%B9%E7%9B%AE%E8%AE%BE%E8%AE%A1?node-id=478-6507",
+        "changes": "Trigger: 边框 #d3d6db → hover/open #1447e6；Content: 去 border 改双层阴影(0,0,2 + 0,4,16)；Item: 圆角6px 高32px hover bg-[#f3f3f4]；选中态蓝色文字+勾"
+      }
     },
     {
       "name": "checkbox",

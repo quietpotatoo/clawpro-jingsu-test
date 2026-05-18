@@ -391,7 +391,7 @@ function ImageScopePopover({
           </div>
           <div className="flex items-center justify-end gap-2 px-3.5 py-2.5 border-t border-gray-100 shrink-0">
             <Button size="sm" variant="outline" className="h-7 text-xs px-3" onClick={() => setOpen(false)}>取消</Button>
-            <Button size="sm" className="h-7 text-xs px-3" disabled={isConfirmDisabled} onClick={handleConfirm} style={isConfirmDisabled ? undefined : { background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>确认</Button>
+            <Button size="sm" className="h-7 text-xs px-3" disabled={isConfirmDisabled} onClick={handleConfirm}>确认</Button>
           </div>
         </PopoverContent>
       </Popover>
@@ -882,7 +882,7 @@ export default function ImageManagement() {
                       {isDefault ? (
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full shrink-0" style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>
+                            <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full shrink-0">
                               <Star className="w-2.5 h-2.5 text-white" />
                             </span>
                           </TooltipTrigger>
@@ -1049,7 +1049,7 @@ export default function ImageManagement() {
                     {isDefault && (
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold text-white cursor-default" style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold text-white cursor-default">
                             <Star className="w-3 h-3" /> 用户端首选
                           </span>
                         </TooltipTrigger>
@@ -1328,7 +1328,7 @@ export default function ImageManagement() {
               onClick={openAddTypeDialog}
               className="w-full rounded-[4px] border-2 border-dashed border-blue-300 hover:border-blue-400 bg-blue-50/40 hover:bg-blue-50/70 transition-all py-6 flex flex-col items-center gap-2 group"
             >
-              <div className="w-10 h-10 rounded-[4px] flex items-center justify-center transition-colors" style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>
+              <div className="w-10 h-10 rounded-[4px] flex items-center justify-center transition-colors">
                 <Plus className="w-5 h-5 text-white" />
               </div>
               <span className="text-sm font-semibold transition-colors" style={{ color: "#1447E6" }}>添加自定义 Agent 类型</span>
@@ -1519,7 +1519,6 @@ export default function ImageManagement() {
             <Button
               onClick={handleImport}
               disabled={!canImport}
-              style={canImport ? { background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" } : {}}
             >
               导入
             </Button>
@@ -1593,7 +1592,6 @@ export default function ImageManagement() {
             <Button
               onClick={handleEditSave}
               disabled={!editAgentType || !editAgentVersion.trim() || !!editVersionError}
-              style={editAgentType && editAgentVersion.trim() && !editVersionError ? { background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" } : {}}
             >
               保存
             </Button>
@@ -1709,11 +1707,6 @@ export default function ImageManagement() {
             <Button
               onClick={handleAddType}
               disabled={!newTypeLabel.trim() || (newTypeKernel === "native" && !nativeAck)}
-              style={
-                newTypeLabel.trim() && (newTypeKernel !== "native" || nativeAck)
-                  ? { background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }
-                  : {}
-              }
             >
               添加
             </Button>
@@ -1742,7 +1735,7 @@ export default function ImageManagement() {
             <Button variant="outline" onClick={() => setPendingRemoveType(null)}>取消</Button>
             <Button
               onClick={confirmRemoveType}
-              className="bg-red-500 hover:bg-red-600 text-white"
+              variant="destructive"
             >
               确认移除
             </Button>

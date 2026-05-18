@@ -170,7 +170,7 @@ function FMGroupFilter({
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             <Button variant="ghost" size="sm" className="text-xs text-gray-500 h-7 px-2" onClick={handleCancel}>取消</Button>
-            <Button size="sm" className="text-xs h-7 px-3" style={{ background: "linear-gradient(135deg, #007AFF, #5856D6)" }} onClick={handleConfirm}>确认</Button>
+            <Button size="sm" className="text-xs h-7 px-3" onClick={handleConfirm}>确认</Button>
           </div>
         </div>
       </PopoverContent>
@@ -1279,10 +1279,6 @@ export default function FileManagement() {
               <Button
                 onClick={handleBatchEnable}
                 disabled={selectedInstances.size === 0}
-                style={selectedInstances.size > 0 ? { background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" } : {}}
-                className={`text-white rounded-[4px] text-sm font-medium px-4 h-9 transition-all ${
-                  selectedInstances.size === 0 ? "bg-gray-300 cursor-not-allowed" : "btn-primary-glow"
-                }`}
               >
                 批量启用网盘服务
                 {selectedInstances.size > 0 && (
@@ -1533,7 +1529,7 @@ export default function FileManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={handleCancelDisable}>取消</Button>
-            <Button onClick={handleConfirmDisable} className="bg-red-500 hover:bg-red-600 text-white">
+            <Button onClick={handleConfirmDisable} variant="destructive">
               确认关闭
             </Button>
           </DialogFooter>
@@ -1565,7 +1561,7 @@ export default function FileManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={handleCancelBatchEnable}>取消</Button>
-            <Button onClick={handleConfirmBatchEnable} style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>
+            <Button onClick={handleConfirmBatchEnable}>
               确认启用
             </Button>
           </DialogFooter>
@@ -1656,7 +1652,7 @@ export default function FileManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={handleCancelSingleEnable}>取消</Button>
-            <Button onClick={handleConfirmSingleEnable} style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}>
+            <Button onClick={handleConfirmSingleEnable}>
               确认启用
             </Button>
           </DialogFooter>
@@ -1744,9 +1740,8 @@ export default function FileManagement() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={handleCancelPurchase}>取消</Button>
-            <Button 
-              onClick={handleConfirmPurchase} 
-              style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
+            <Button
+              onClick={handleConfirmPurchase}
               className="gap-2"
             >
               <ShoppingCart className="w-4 h-4" />

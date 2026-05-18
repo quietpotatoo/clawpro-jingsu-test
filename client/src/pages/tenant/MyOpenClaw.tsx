@@ -523,7 +523,7 @@ export default function MyOpenClaw() {
               {/* 双模式 Segmented：保留 OneID / 普通模式逻辑
                   字号/内边距/图标尺寸与 ViewModeSegmented 保持一致 */}
               <div
-                className="hidden md:inline-flex items-center gap-1 rounded-[4px] p-1"
+                className="hidden md:inline-flex items-center gap-1 rounded-[4px] p-1 h-9"
                 style={{ background: "#F5F5F5" }}
                 role="tablist"
                 aria-label="用户分组模式切换"
@@ -532,7 +532,7 @@ export default function MyOpenClaw() {
                   role="tab"
                   aria-selected={groupMode === "normal"}
                   onClick={() => handleGroupModeChange("normal")}
-                  className={`inline-flex items-center gap-1 px-3 py-1 rounded-[3px] text-sm font-medium transition-all duration-150 ${
+                  className={`inline-flex items-center gap-1 px-3 h-7 rounded-[3px] text-sm font-medium transition-all duration-150 ${
                     groupMode === "normal"
                       ? "bg-white text-[#0A0A0A]"
                       : "text-[#737373] hover:text-[#0A0A0A]"
@@ -550,7 +550,7 @@ export default function MyOpenClaw() {
                   role="tab"
                   aria-selected={groupMode === "multi-group"}
                   onClick={() => handleGroupModeChange("multi-group")}
-                  className={`inline-flex items-center gap-1 px-3 py-1 rounded-[3px] text-sm font-medium transition-all duration-150 ${
+                  className={`inline-flex items-center gap-1 px-3 h-7 rounded-[3px] text-sm font-medium transition-all duration-150 ${
                     groupMode === "multi-group"
                       ? "bg-white text-[#0A0A0A]"
                       : "text-[#737373] hover:text-[#0A0A0A]"
@@ -981,7 +981,7 @@ export default function MyOpenClaw() {
                 <div
                   className="w-7 h-7 rounded-[4px] flex items-center justify-center text-base text-white"
                   // allow-inline-gradient: Logo 图标容器（非按钮，SKILL §8.1 白名单）
-                  style={{ background: "linear-gradient(90deg, #020617 70%, #1447E6 100%)" }}
+                 
                 >
                   🦞
                 </div>
