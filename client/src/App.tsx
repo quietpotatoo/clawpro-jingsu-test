@@ -26,6 +26,10 @@ import ResourceManagement from "./pages/admin/ResourceManagement";
 import ResetPassword from "./pages/tenant/ResetPassword";
 import AgentChat from "./pages/tenant/AgentChat";
 
+// [sandbox/explore-1] 沙盒试验：欢迎页 + 对话视图放大版
+import ChatWelcome from "./pages/sandbox/ChatWelcome";
+import ChatFull from "./pages/sandbox/ChatFull";
+
 // Admin
 import AdminLayout from "./components/AdminLayout";
 import BasicInfo from "./pages/admin/BasicInfo";
@@ -80,6 +84,10 @@ function Router() {
 
       {/* Preview - Figma 还原稿 */}
       <Route path="/preview/agent-chat" component={AgentChat} />
+
+      {/* [sandbox/explore-1] 沙盒试验：欢迎页 + 对话视图放大版 */}
+      <Route path="/chat-welcome" component={ChatWelcome} />
+      <Route path="/chat" component={ChatFull} />
 
       {/* Admin Routes - 使用顶层路由避免 wouter 嵌套路由匹配问题 */}
       <Route path="/admin/basic-info" component={() => <AdminLayout><ModeAwareRoute standard={<StandardBasicInfo />} custom={<BasicInfo />} /></AdminLayout>} />

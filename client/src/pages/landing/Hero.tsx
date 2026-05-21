@@ -60,6 +60,49 @@ export default function Hero() {
             <span>立即创建</span>
             <img src="/landing-assets/59.svg" alt="" width={24} height={24} />
           </div>
+
+          {/* [sandbox/explore-1] 试验入口：和 Agent 聊聊 → /chat-welcome */}
+          <div
+            onClick={() => navigate("/chat-welcome")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                navigate("/chat-welcome");
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            style={{
+              width: 280,
+              height: 44,
+              margin: "12px auto 0",
+              background: "rgba(255,255,255,0.7)",
+              border: "1px solid rgba(20,71,230,0.25)",
+              borderRadius: 8,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              cursor: "pointer",
+              fontSize: 14,
+              fontWeight: 500,
+              color: "#1447E6",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+              transition: "transform 0.2s, background 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.95)";
+              e.currentTarget.style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.7)";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
+            <span>和 Agent 聊聊</span>
+            <span style={{ fontSize: 16, lineHeight: 1 }}>→</span>
+          </div>
         </div>
 
         {/* Hero Visual：卡片背景 + 6 张卡片 + 吉祥物 */}
